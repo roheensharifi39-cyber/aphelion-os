@@ -9,9 +9,9 @@ The final user reference and working V1 request govern this implementation.
 - [x] Connect the installed Obsidian app, registered vault, Markdown graph/editor and disk watcher.
 - [x] Implement real projects, confined files, curated terminal commands, automation recipes and measured telemetry.
 - [x] Implement plan/build/check/receipt missions and cancellation with partial output retention.
-- [ ] Resolve and verify the Windows Codex execution restriction with a real project task.
-- [ ] Complete browser/integration checks and independent review.
-- [ ] Package and smoke-test the portable Windows build.
-- [ ] Publish verified source and deliver the executable.
+- [x] Resolve and verify the Windows Codex execution restriction with a real project task.
+- [x] Complete browser/integration checks and independent review.
+- [x] Package and smoke-test the portable Windows build.
+- [x] Publish verified source and deliver the executable.
 
 Critical invariants: subscription authentication only; credentials stay with official clients; no renderer Node access; no personal-vault test writes; no invented completion/data; no completed mission after failed checks; respect official workspace permission enforcement.
