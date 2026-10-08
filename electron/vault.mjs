@@ -79,6 +79,13 @@ export async function saveNote(root, note) {
 
 export async function initializeVault(root) {
   await mkdir(root, { recursive: true });
-  const welcome = '# Welcome to your world\n\nThis is your shared memory. Save ideas, plans, and answers here.\n\n## Your first blocks\n\n- Open the Workbench and choose Claude or Codex.\n- Connect your API keys in Settings for live conversations.\n- Save a useful response directly to this vault.\n- Connect an Obsidian folder to work with your own notes.\n\nEverything in this vault is a plain Markdown file.\n';
+  const welcome = '# Your shared memory\n\nPlans, notes, and conversations live together here.\n\n## Your command center\n\n- Choose Claude or Codex beside this vault.\n- Sign in with your existing subscriptions in Connections.\n- Save a useful response directly to your notes.\n- Connect an Obsidian folder to work with your own vault.\n\nYour notes are plain Markdown. Your accounts stay with the official clients.\n';
   await writeFile(resolve(root, 'Welcome.md'), welcome, { flag: 'wx' }).catch(error => { if (error.code !== 'EEXIST') throw error; });
+  const starters = {
+    'Project Memory.md': '---\ntags: [project, memory]\n---\n# Project Memory\n\nAphelion is your personal AI command center. Think with Claude, build with Codex, and keep decisions in one local vault.\n\n## Context\n\n- [[Architecture]] defines the connections.\n- [[Ideas]] holds the next possibilities.\n- [[Decisions]] records the choices worth remembering.\n\nYour subscriptions stay with the official clients. Your notes stay on your device.\n',
+    'Architecture.md': '---\ntags: [system, architecture]\n---\n# Architecture\n\nA local desktop connects official Claude Code and Codex clients to shared Markdown notes.\n\n## The loop\n\nThink → build → remember → further.\n\nStart with [[Project Memory]], keep new directions in [[Ideas]], and write the outcome in [[Decisions]].\n',
+    'Ideas.md': '---\ntags: [ideas, next]\n---\n# Ideas\n\nA place for the next thing you want to make.\n\n## Next mission\n\nDescribe the smallest useful outcome, then launch it from Mission Control.\n\nKeep the plan linked to [[Project Memory]] and [[Architecture]].\n',
+    'Decisions.md': '---\ntags: [decisions, context]\n---\n# Decisions\n\n- Use existing Claude and ChatGPT subscriptions.\n- Keep the workbench and vault in one command center.\n- Use Minecraft-style buttons and pixel typography.\n- Keep notes as plain Markdown.\n\nThe wider context lives in [[Project Memory]].\n',
+  };
+  for (const [file, content] of Object.entries(starters)) await writeFile(resolve(root, file), content, { flag: 'wx' }).catch(error => { if (error.code !== 'EEXIST') throw error; });
 }
