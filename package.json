@@ -1,0 +1,45 @@
+{
+  "name": "aphelion-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Minecraft-inspired, local-first AI desktop workspace.",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "author": "Aphelion",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "start": "electron .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run build",
+    "package": "npm run build && electron-builder --win portable --publish never"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "typescript": "7.0.2",
+    "vite": "8.3.3",
+    "vitest": "5.0.3"
+  },
+  "build": {
+    "appId": "studio.aphelion.os",
+    "productName": "Aphelion OS",
+    "directories": { "output": "release" },
+    "files": ["dist/**/*", "electron/**/*", "package.json"],
+    "win": { "target": "portable", "signAndEditExecutable": false },
+    "portable": { "artifactName": "Aphelion-OS-${version}-portable.exe" }
+  }
+}
