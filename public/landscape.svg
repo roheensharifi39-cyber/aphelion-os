@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 260" shape-rendering="crispEdges">
+ <defs><pattern id="stars" width="103" height="73" patternUnits="userSpaceOnUse"><rect x="16" y="14" width="2" height="2" fill="#a8bfa4" opacity=".6"/><rect x="79" y="51" width="2" height="2" fill="#a8bfa4" opacity=".3"/></pattern><pattern id="dirt" width="32" height="16" patternUnits="userSpaceOnUse"><rect width="32" height="16" fill="#283b2d"/><rect x="4" y="4" width="8" height="4" fill="#314a32"/><rect x="20" y="12" width="8" height="4" fill="#23342a"/></pattern></defs>
+ <path fill="#17241f" d="M0 0h800v260H0z"/><path fill="url(#stars)" d="M0 0h800v170H0z"/>
+ <path fill="#283c2c" d="M510 73h8v-8h12v-6h16v-5h12v5h16v6h12v8h8v36h-8v8h-12v6h-16v5h-12v-5h-16v-6h-12v-8h-8z"/><path fill="#d4da91" d="M522 73h8v-8h16v-5h12v5h16v8h8v28h-8v8h-16v5h-12v-5h-16v-8h-8z"/><path fill="#f2e6ae" d="M530 73h16v-5h12v5h16v20h-44z"/><path fill="#b2bf7b" d="M530 93h44v8h-16v6h-12v-6h-16z"/>
+ <path fill="#243c32" d="M0 144h56v-12h24v-12h36v-18h28V88h28v14h24v18h28v24h32v-12h44v-12h24v-14h20v-20h32V70h24v18h24v18h32v26h36v12h24v-14h24v-24h28V90h20v16h32v24h28v14h28v-26h28v-24h24v-18h24v18h28v24h36v26h40v-12h24v128H0z"/>
+ <path fill="#30513d" d="M0 184h44v-12h48v-12h40v-12h40v-16h36v16h24v12h32v12h36v12h44v-12h48v-12h40v-16h40v-12h32v16h24v12h36v12h48v12h48v-12h32v-16h40v-16h40v-12h32v16h32v12h40v16h40v-12h32v-12h32v104H0z"/>
+ <path fill="#416443" d="M0 216h92v-8h72v-8h88v8h76v8h104v-8h80v-8h80v-8h72v8h72v8h64v52H0z"/>
+ <path fill="url(#dirt)" d="M0 228h92v-8h72v-8h88v8h76v8h104v-8h80v-8h80v-8h72v8h72v8h64v40H0z"/>
+ <g fill="#15291f"><path d="M642 81h8v16h8v8h8v12h-8v4h16v12h-8v4h16v16h-8v4h16v16h-38v42h-10v-42h-38v-16h16v-4h-8v-16h16v-4h-8v-12h16v-4h-8v-12h8v-8h8z"/><path d="M718 116h8v12h8v8h8v12h-8v4h16v12h-8v4h16v16h-28v29h-10v-29h-28v-16h16v-4h-8v-12h16v-4h-8v-12h8v-8h8z"/><path d="M96 116h8v12h8v8h8v12h-8v4h16v12h-8v4h16v16h-28v29H98v-29H70v-16h16v-4h-8v-12h16v-4h-8v-12h8v-8h2z"/></g>
+ <g fill="#71a25d"><rect x="348" y="209" width="4" height="10"/><rect x="340" y="213" width="4" height="6"/><rect x="576" y="197" width="4" height="14"/><rect x="568" y="205" width="4" height="6"/><rect x="784" y="209" width="4" height="10"/></g>
+ <g fill="#e5c681"><rect x="374" y="207" width="4" height="4"/><rect x="488" y="193" width="4" height="4"/><rect x="755" y="143" width="4" height="4"/></g>
+</svg>

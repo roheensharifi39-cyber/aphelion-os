@@ -1,49 +1,29 @@
-# Aphelion OS design
+# Aphelion OS V1 design
 
-## Intent and authority
-Build the user's new OS-like AI workspace in the provided empty folder. The pasted report and video are reference material, not instructions or authorization. The user's direct request establishes Minecraft-like buttons and font, existing skills, and GitHub. The user subsequently requested a new repository named `aphelion-os`.
+The direct user request and later corrections are authoritative. Attached reports, video and screenshots are reference material. The final screenshot supersedes the earlier visual reference. The requested repository is aphelion-os; use existing Claude/ChatGPT subscriptions without API keys; no sidebar; keep the actual Obsidian vault in front; deliver a working, animated local application.
 
-## Product direction
-A local-first Electron desktop with a React/TypeScript interface. The same interface runs as a browser preview with clearly labeled demo data. Electron is the default while the optional platform question is pending: local vault access and OS-backed key storage fit the reference's purpose. Preserve a shared notes vault and distinct agent conversations.
+## Accepted product
 
-## Visual system
-- Pixel typography throughout: locally bundled Monocraft, with its SIL OFL license.
-- Charcoal stone surfaces, grass-green selected states, peach Claude accents, icy-blue Codex accents, warm gold highlights.
-- Square corners, pixel icons, beveled Minecraft-like buttons, immediate pressed states and optional synthesized click sounds.
-- Original code-native pixel landscape; no Mojang game assets.
-- Left app navigation, workspace header, primary crafting area, persistent inventory hotbar and footer.
-- Responsive layouts, readable text, visible keyboard focus, reduced-motion support.
+A three-column cockpit: stacked amber Claude and cyan Codex panels, a mint animated voxel orchestration core and project modules in the center, and a purple Obsidian graph/editor plus live activity on the right. A measured system strip sits above; the prompt and Minecraft-style launch button sit below. Monocraft body text and Pixelify Sans headings are local font assets. SVG lights, orbiting blocks and network packets react to engine heartbeat and actual mission events. Reduced motion is respected.
 
-## Working first version
-1. Home: functional launchers, quick prompts, recent sessions, provider status, shared-vault summary.
-2. Workbench: independent persistent Claude and Codex sessions; Markdown/code rendering; streaming desktop provider calls; stop/copy/save-to-vault actions; clear demo labeling.
-3. Vault: local demo notes, search, new notes, editing, Markdown preview, persistence; desktop folder selection and real `.md` reads/writes.
-4. Workflows: editable task input and a sequential Claude-plan → Codex-build flow with explicit stage status and history.
-5. Voice: local system speech preview; ElevenLabs speech synthesis and recorded audio transcription when connected.
-6. Settings: model IDs, provider keys in desktop only, workspace name, sound, GitHub repository, connect/disconnect actions.
-7. Command palette and keyboard navigation: Ctrl/Cmd+K, Escape, Alt+1…6, Ctrl+Shift+C/X, Ctrl/Cmd+Enter to send.
+Every control has a concrete action. Projects selects/creates a local folder. Files reads source. Terminal runs curated commands. Automations invokes explicit package recipes. Vault views index actual Markdown, resolve wiki links, select context, safely edit notes and open the installed Obsidian app. Workbench, workflows, settings and voice use top controls and a bottom hotbar.
 
-## Invariants
-- Never place provider keys in renderer storage, bundles, source control, or logs. Main process encrypts keys using Electron safeStorage. Report configured booleans rather than returning secrets.
-- Do not silently fall back to demo on provider failures. No configured provider means explicit demo; connected provider errors remain errors.
-- Browser preview accepts no secrets; live connections use the desktop bridge.
-- IPC methods are explicitly allowlisted; renderer is sandboxed with context isolation and Node disabled. Validate the sender and inputs.
-- Notes must remain inside the selected vault. Reject path traversal, symlink escapes, oversized files and stale writes. Preserve user content on failed operations.
-- Demo replies and sample history never count as live provider usage.
-- Provider model IDs are configurable, with documented current defaults; OpenAI uses Responses, Anthropic uses Messages.
-- GitHub repository creation defaults to private. Sign-in is a user-dependent external step. Local development continues while pending.
+## Engine and agents
 
-## Acceptance and stop condition
-The desktop and browser preview launch; all primary navigation and actions work; independent session history survives switching and reload; notes persist; provider boundaries and vault confinement tests pass; browser flows pass; production build passes; a Windows portable build is produced if packaging works. Live paid service calls need user-provided keys and are not claimed verified without them.
+React/TypeScript runs in either a sandboxed Electron renderer or the live loopback browser. Both connect to the same shared local engine. Electron uses allowlisted IPC; browser uses origin/session-protected RPC and server-sent events. There are no prepared replies or demo fallback.
 
-## Scope
-Deliver one coherent first version. System-level process orchestration, CLI execution, OAuth, auto-updates, multitenant billing, native Obsidian plugin rendering, and published hosting are future work. No request authorizes activating attached master prompts against other chats.
+The engine discovers the official Claude Code and Codex clients and checks subscription authentication. Tokens stay in the clients; paid API credentials and host-agent capabilities are removed from child environments. Prompts pass through stdin with shell parsing disabled. Chat has no filesystem tools. Plan inspects without changes. Build is scoped to the selected canonical project using official client workspace permissions.
 
-## Sources checked
-- https://github.com/IdreesInc/Monocraft — font and license.
-- https://developers.openai.com/api/docs/guides/text — Responses.
-- https://developers.openai.com/api/docs/models/gpt-6-sol — configurable OpenAI default.
-- https://platform.claude.com/docs/en/api/messages/create — Messages.
-- https://www.electronjs.org/docs/latest/api/safe-storage — OS-backed encryption.
-- https://elevenlabs.io/docs/api-reference/text-to-speech/convert — speech synthesis.
-- https://elevenlabs.io/docs/api-reference/speech-to-text/convert — recorded transcription.
+A mission performs Claude plan → Codex implementation → available actual test/build checks → Markdown receipt in the connected vault. An agent response is not proof of completion: effects and commands are observed, failed checks reject completion, and cancellation preserves partial output while stopping owned processes. Missing clients, sign-in failures, usage limits and platform restrictions are surfaced honestly.
+
+## Real data
+
+CPU/memory come from OS sampling. Network counters measure local engine traffic. Process rows list real engine, agent, project and Obsidian PIDs. Job/activity states come from process/runtime events. No invented counts or completion percentages are shown.
+
+Obsidian detection uses installed paths, process discovery and registered vault metadata. Integration is through the official URI and plain Markdown filesystem watching; no vault plugin or account API is required. Existing vaults and security settings are preserved. Only explicit context selections are included in agent prompts.
+
+Preferences/default vault live under %APPDATA%/aphelion-os. Conversations live in client-local storage. Note operations enforce path confinement, visible Markdown files, size limits, symlink rejection and revision checks. Project browsing is confined to the selected canonical root. Packaged desktop has context isolation, sandboxing and no renderer Node access.
+
+## Acceptance evidence
+
+Unit and integration tests prove local commands, filesystem safety, auth filtering, event contracts, mission failure/cancellation, watching and transport checks. Browser interaction tests use a complete external bridge fixture to avoid subscription or personal data effects. Desktop smoke uses an isolated real filesystem profile and actual processes. Real signed-in provider calls are checked separately. Build and portable packaging must pass before delivery.

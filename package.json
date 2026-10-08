@@ -14,9 +14,10 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "check": "npm test && npm run build",
-    "package": "npm run build && electron-builder --win portable --publish never"
+    "package": "npm run build && node scripts/package.mjs"
   },
   "dependencies": {
+    "@fontsource/pixelify-sans": "5.3.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-markdown": "10.1.0",
@@ -37,9 +38,20 @@
   "build": {
     "appId": "studio.aphelion.os",
     "productName": "Aphelion OS",
-    "directories": { "output": "release" },
-    "files": ["dist/**/*", "electron/**/*", "package.json"],
-    "win": { "target": "portable", "signAndEditExecutable": false },
-    "portable": { "artifactName": "Aphelion-OS-${version}-portable.exe" }
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable",
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Aphelion-OS-${version}-portable.exe"
+    }
   }
 }
