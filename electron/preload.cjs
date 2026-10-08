@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 const invoke = (name, ...args) => ipcRenderer.invoke('aphelion:' + name, ...args);
 contextBridge.exposeInMainWorld('aphelion', {
   status: () => invoke('status'), configure: input => invoke('configure', input),
+  modelCatalog: () => invoke('modelCatalog'),
   login: agent => invoke('login', agent),
   runtime: () => invoke('runtime'), mission: request => invoke('mission', request),
   onRuntimeEvent: callback => { const listener = (_event, payload) => callback(payload); ipcRenderer.on('aphelion:runtimeEvent', listener); return () => ipcRenderer.removeListener('aphelion:runtimeEvent', listener); },

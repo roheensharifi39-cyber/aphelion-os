@@ -7,7 +7,7 @@ import { Button, ErrorNote } from './UI';
 
 type GraphNode = VaultGraph['nodes'][number];
 type Tab = 'graph' | 'files' | 'recent' | 'tags' | 'context';
-type Props = { notes: Note[]; status: Status; obsidian?: ObsidianInfo; focusMode: boolean; visible: boolean; renderFiles: (focusPath: string | undefined, active: boolean) => ReactNode; openAgent: (agent: Agent) => void; openObsidian: (path?: string) => void; contextPaths: string[]; setContextPaths: (paths: string[]) => void; event: (text: string) => void };
+type Props = { onGraph?: (graph: VaultGraph | null) => void; notes: Note[]; status: Status; obsidian?: ObsidianInfo; focusMode: boolean; visible: boolean; renderFiles: (focusPath: string | undefined, active: boolean) => ReactNode; openAgent: (agent: Agent) => void; openObsidian: (path?: string) => void; contextPaths: string[]; setContextPaths: (paths: string[]) => void; event: (text: string) => void };
 function labelLines(title: string): string[] {
   const words = title.split(/\s+/); const lines = [''];
   for (const word of words) { const current = lines.at(-1)!; if (current && current.length + word.length > 19) { if (lines.length === 2) { lines[1] = `${lines[1].slice(0, 16)}…`; break; } lines.push(word); } else lines[lines.length - 1] += `${current ? ' ' : ''}${word}`; }
@@ -54,13 +54,13 @@ export function VaultHub(p: Props) {
   useEffect(() => { setTab(p.focusMode ? 'files' : homeTab.current); }, [p.focusMode]);
   useEffect(() => {
     if (previousRoot.current === p.status.vaultPath) return;
-    previousRoot.current = p.status.vaultPath; setGraph(null); setSelectedId(''); setFocusPath(undefined); setQuery(''); setSelectedTag('');
+    previousRoot.current = p.status.vaultPath; setGraph(null); p.onGraph?.(null); setSelectedId(''); setFocusPath(undefined); setQuery(''); setSelectedTag('');
   }, [p.status.vaultPath]);
   useEffect(() => {
     let active = true; setLoading(true); setError('');
-    void Promise.resolve().then(() => api.vaultGraph()).then(next => { if (!active) return; setGraph(next); setSelectedId(previous => next.nodes.some(node => node.id === previous) ? previous : next.nodes[0]?.id || ''); }).catch(e => { if (active) setError((e as Error).message); }).finally(() => { if (active) setLoading(false); });
+    void Promise.resolve().then(() => api.vaultGraph()).then(next => { if (!active) return; setGraph(next); p.onGraph?.(next); setSelectedId(previous => next.nodes.some(node => node.id === previous) ? previous : next.nodes[0]?.id || ''); }).catch(e => { if (active) setError((e as Error).message); }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [p.notes, p.status.vaultPath, revision]);
+  }, [p.notes, p.status.vaultPath, revision, p.onGraph]);
   useEffect(() => { if (searching) search.current?.focus(); }, [searching, tab]);
   const nodes = graph?.nodes || [];
   const filtered = nodes.filter(node => `${node.title} ${node.path} ${node.tags.join(' ')} ${node.excerpt}`.toLowerCase().includes(query.toLowerCase()));

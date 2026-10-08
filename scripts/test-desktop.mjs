@@ -22,6 +22,16 @@ try {
   assert.equal(status.desktop, true);
   assert.equal('keys' in status, false);
   assert.equal('voiceId' in status, false);
+  const models = await page.evaluate(() => window.aphelion.modelCatalog());
+  for (const agent of ['claude', 'codex']) {
+    const name = agent === 'claude' ? 'Claude' : 'Codex';
+    assert.equal(await page.getByLabel(`${name} model`, { exact: true }).count(), 1);
+    assert.equal(await page.getByLabel(`${name} reasoning`, { exact: true }).count(), 1);
+    if (status.auth[agent].installed) assert.ok(models[agent].models.length > 0, `${name} must return real client model choices.`);
+    const control = page.getByRole('button', { name: `Run ${name} prompt`, exact: true });
+    const geometry = await control.evaluate(button => ({ bottom: button.getBoundingClientRect().bottom, footer: button.closest('.agent-card').querySelector('.agent-card-footer').getBoundingClientRect().top }));
+    assert.ok(geometry.bottom <= geometry.footer, `${name} Run button must be fully visible above the footer.`);
+  }
   assert.ok(['subscription', 'missing', 'signed-out', 'api-key'].includes(status.auth.claude.mode));
   await assert.rejects(page.evaluate(() => window.aphelion.configure({ keys: { claude: 'forbidden-key' } })));
   assert.equal(await page.locator('input[type=password]').count(), 0);

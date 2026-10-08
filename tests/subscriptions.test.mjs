@@ -10,11 +10,13 @@ describe('subscription-only authentication', () => {
     for (const key of ['OPENAI_API_KEY','CODEX_API_KEY','ANTHROPIC_API_KEY','ANTHROPIC_AUTH_TOKEN','CLAUDE_CODE_OAUTH_TOKEN','OPENAI_BASE_URL','CLAUDE_CODE_USE_BEDROCK']) expect(env[key]).toBeUndefined();
   });
   it('isolates product clients from the host agents tool pipe and permission profile', () => {
-    const env = subscriptionEnvironment({ PATH: 'tools', CODEX_HOME: 'account-home', CODEX_PERMISSION_PROFILE: 'read-only', CODEX_APP_TOOLS_PIPE_PATH: 'host-pipe', CODEX_SESSION_ID: 'host-session' });
+    const env = subscriptionEnvironment({ PATH: 'tools', CODEX_HOME: 'account-home', CODEX_PERMISSION_PROFILE: 'read-only', CODEX_APP_TOOLS_PIPE_PATH: 'host-pipe', CODEX_SESSION_ID: 'host-session', CLAUDE_CODE_EFFORT_LEVEL: 'high', MAX_THINKING_TOKENS: '99999' });
     expect(env.CODEX_HOME).toBe('account-home');
     expect(env.CODEX_PERMISSION_PROFILE).toBeUndefined();
     expect(env.CODEX_APP_TOOLS_PIPE_PATH).toBeUndefined();
     expect(env.CODEX_SESSION_ID).toBeUndefined();
+    expect(env.CLAUDE_CODE_EFFORT_LEVEL).toBeUndefined();
+    expect(env.MAX_THINKING_TOKENS).toBeUndefined();
   });
   it('recognizes ChatGPT and Claude account sign-in while refusing API modes', () => {
     expect(parseAuthentication('codex', 'Logged in using ChatGPT').mode).toBe('subscription');
@@ -25,6 +27,29 @@ describe('subscription-only authentication', () => {
   });
 });
 describe('official CLI event contracts', () => {
+  it('sends the selected model and reasoning to each official subscription client', async () => {
+    for (const agent of ['claude', 'codex']) {
+      let args;
+      const spawnImpl = (_command, commandArgs) => {
+        args = commandArgs;
+        const child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough(); child.stdin = new PassThrough();
+        child.stdin.on('finish', () => {
+          child.stdout.write(agent === 'claude' ? '{"type":"result","subtype":"success","result":"Done"}\n' : '{"type":"item.completed","item":{"id":"answer","type":"agent_message","text":"Done"}}\n{"type":"turn.completed"}\n');
+          child.emit('close', 0);
+        }); child.stdin.resume(); return child;
+      };
+      const model = agent === 'claude' ? 'sonnet' : 'gpt-6-astra', effort = agent === 'claude' ? 'max' : 'xhigh';
+      await runSubscriptionChat({ agent, messages: [{ role: 'user', content: 'Hello' }] }, { models: { [agent]: model }, reasoning: { [agent]: effort } }, { getCliImpl: async () => ({ command: agent, args: [] }), inspectImpl: async () => ({ signedIn: true, mode: 'subscription' }), spawnImpl, cwd: '.' });
+      expect(args[args.indexOf('--model') + 1]).toBe(model);
+      if (agent === 'claude') expect(args[args.indexOf('--effort') + 1]).toBe('max');
+      else expect(args).toContain('model_reasoning_effort="xhigh"');
+    }
+  });
+  it('rejects an invalid reasoning preference before launching a client', async () => {
+    let spawned = false;
+    await expect(runSubscriptionChat({ agent: 'codex', messages: [{ role: 'user', content: 'Hello' }] }, { reasoning: { codex: 'high; unsafe' } }, { getCliImpl: async () => ({ command: 'codex', args: [] }), inspectImpl: async () => ({ signedIn: true, mode: 'subscription' }), spawnImpl: () => { spawned = true; } })).rejects.toThrow(/reasoning|effort/i);
+    expect(spawned).toBe(false);
+  });
   it('collects Codex message updates without duplication and requires completion', () => {
     const chunks = []; const decoder = createEventDecoder('codex', text => chunks.push(text));
     decoder.accept({ type: 'item.updated', item: { id: 'one', type: 'agent_message', text: 'Hello' } });

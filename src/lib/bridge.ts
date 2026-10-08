@@ -31,7 +31,7 @@ async function rpc<T>(method: string, ...args: unknown[]): Promise<T> {
   const data = await response.json(); if (!response.ok || !data.ok) throw new Error(data.error || 'The local engine action failed.'); return data.result as T;
 }
 const browserBridge: AphelionBridge = {
-  status: () => rpc('status'), configure: input => rpc('configure', input), login: agent => rpc('login', agent),
+  status: () => rpc('status'), modelCatalog: () => rpc('modelCatalog'), configure: input => rpc('configure', input), login: agent => rpc('login', agent),
   runtime: () => rpc('runtime'), mission: request => rpc('mission', request),
   onRuntimeEvent: handler => { runtimeHandlers.add(handler); void stream().catch(() => {}); return () => runtimeHandlers.delete(handler); },
   chat: request => rpc('chat', request), cancel: id => rpc('cancel', id),
