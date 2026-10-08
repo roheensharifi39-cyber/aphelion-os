@@ -6,10 +6,12 @@ export type Workspace = { version: 1; sessions: Session[]; active: Record<Agent,
 export type Note = { path: string; title: string; modified: string; content?: string; revision?: string; create?: boolean };
 export type VaultGraph = { nodes: { id: string; path: string; title: string; tags: string[]; excerpt: string; modified: string }[]; edges: { from: string; to: string }[]; total: number; truncated: boolean };
 export type Connection = { installed: boolean; signedIn: boolean; mode: 'subscription' | 'signed-out' | 'api-key' | 'missing'; detail: string };
-export type Status = { desktop: boolean; connected: Record<Agent, boolean>; auth: Record<Agent, Connection>; models: Record<Agent, string>; vaultPath: string; repo: string };
-export type ChatRequest = { agent: Agent; messages: Pick<Message, 'role' | 'content'>[]; requestId: string; mode?: 'chat' | 'plan' | 'build' };
+export type Status = { desktop: boolean; connected: Record<Agent, boolean>; auth: Record<Agent, Connection>; models: Record<Agent, string>; reasoning?: Record<Agent, string>; vaultPath: string; repo: string };
+export type ModelOption = { id: string; name: string; description: string; efforts: string[]; defaultEffort?: string; isDefault?: boolean; resolved?: string };
+export type ModelCatalog = Record<Agent, { models: ModelOption[]; error?: string }>;
+export type ChatRequest = { agent: Agent; messages: Pick<Message, 'role' | 'content'>[]; requestId: string; mode?: 'chat' | 'plan' | 'build'; contextPaths?: string[] };
 export type ChatResult = { text: string; demo: boolean; usage: { input: number; output: number } };
-export type SettingsInput = { models?: Record<Agent, string>; repo?: string };
+export type SettingsInput = { models?: Record<Agent, string>; reasoning?: Record<Agent, string>; repo?: string };
 export type ProjectInfo = { path: string; name: string; branch: string | null; dirty: boolean };
 export type ProjectFile = { path: string; name: string; kind: 'file' | 'directory' };
 export type AutomationInfo = { id: string; name: string; status: 'idle' | 'running'; detail: string };
@@ -19,6 +21,7 @@ export type RuntimeEvent = { id: string; time: number; type: 'telemetry' | 'acti
 export type MissionResult = { plan: string; build: string; project: ProjectInfo | null; receiptPath: string };
 export interface AphelionBridge {
   status(): Promise<Status>;
+  modelCatalog(): Promise<ModelCatalog>;
   configure(input: SettingsInput): Promise<Status>;
   login(agent: Agent): Promise<Status>;
   runtime(): Promise<RuntimeSnapshot>;

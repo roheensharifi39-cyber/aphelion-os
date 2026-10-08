@@ -54,7 +54,7 @@ async function start(agentRunner = async (request, _config, options) => {
   if (request.agent === 'claude') return response('Inspect source, implement answer 42, then run tests and build.');
   await writeFile(join(options.cwd, 'source.mjs'), 'export const answer = 42;\n');
   return response('Updated the real source file.');
-}) {
+}, runtimeOptions = {}) {
   const isolatedEnvironment = { ...process.env, APPDATA: join(root, 'metadata'), LOCALAPPDATA: join(root, 'metadata') };
   engine = await createRuntime({
     dataDirectory,
@@ -64,6 +64,7 @@ async function start(agentRunner = async (request, _config, options) => {
     // Exercise the actual vault watcher against our owned vault. Obsidian's
     // registered-vault metadata is redirected to the temporary fixture.
     obsidianFactory: options => createObsidianAdapter({ ...options, env: isolatedEnvironment }),
+    ...runtimeOptions,
   });
   engine.onEvent(event => events.push(event));
   await engine.invoke('selectProject');
@@ -80,6 +81,30 @@ function waitForEvent(predicate) {
 }
 
 describe('shared mission engine integration', () => {
+  it('blocks agent starts while a workspace folder picker is pending', async () => {
+    let picks = 0, finishPicker, runs = 0;
+    await start(async () => { runs++; return response('Should not run during switching.'); }, { selectFolder: async () => ++picks === 1 ? project : new Promise(resolve => { finishPicker = resolve; }) });
+    const selection = engine.invoke('selectProject');
+    await new Promise(resolve => setImmediate(resolve));
+    await expect(engine.invoke('chat', [{ agent: 'codex', requestId: 'during-picker', messages: [{ role: 'user', content: 'Hello' }] }])).rejects.toThrow(/choosing|project|vault/i);
+    expect(runs).toBe(0);
+    finishPicker(null); await selection;
+    expect((await engine.invoke('project')).path).toBe(project);
+  });
+  it('persists independent reasoning choices and quotes real vault context into a direct prompt', async () => {
+    let captured;
+    await start(async (request, config) => { captured = { request, config }; return response('Read the provided note.'); });
+    await engine.invoke('configure', [{ models: { claude: 'sonnet', codex: 'gpt-6-astra' }, reasoning: { claude: 'high', codex: 'xhigh' } }]);
+    await engine.invoke('saveNote', [{ path: 'Prompt context.md', create: true, content: '# Design\nReal shared memory context.' }]);
+    const message = { role: 'user', content: 'Explain the design' };
+    await engine.invoke('chat', [{ agent: 'claude', requestId: 'context-chat', messages: [message], contextPaths: ['Prompt context.md'] }]);
+    expect(captured.config.reasoning).toEqual({ claude: 'high', codex: 'xhigh' });
+    expect(captured.request.messages.at(-1).content).toContain('Real shared memory context.');
+    expect(captured.request.messages.at(-1).content).toContain('quoted');
+    expect(message.content).toBe('Explain the design');
+    expect(JSON.parse(await readFile(join(dataDirectory, 'preferences.json'), 'utf8')).reasoning.codex).toBe('xhigh');
+    await expect(engine.invoke('configure', [{ reasoning: { claude: 'unsafe', codex: 'auto' } }])).rejects.toThrow(/reasoning|effort/i);
+  });
   it('verifies real changes with actual npm recipes and saves an evidence-backed receipt', async () => {
     const calls = [];
     await start(async (request, _config, options) => {

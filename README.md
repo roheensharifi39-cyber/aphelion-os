@@ -2,11 +2,11 @@
 
 A live, local AI command center with Minecraft-style buttons, pixel typography, an animated voxel core, and your real Obsidian vault on the front screen. Claude plans, Codex builds, and the local engine verifies the result. No sidebar or API-key fields.
 
-![Aphelion OS V1 cockpit](docs/screenshots/aphelion-v1.png)
+![Aphelion living command center](docs/screenshots/aphelion-living-home.png)
 
 ## Open it
 
-On Windows, open `release/Aphelion-OS-0.1.0-portable.exe`. No installer is needed. The app detects your existing official Claude Code and Codex account sign-ins. Use **Settings → Check connections** to refresh them.
+On Windows, open `release/Aphelion-OS-0.2.0-portable.exe`. No installer is needed. The app detects your existing official Claude Code and Codex account sign-ins. Use **Settings → Check connections** to refresh them.
 
 For development, install Node.js 24 or later:
 
@@ -31,6 +31,16 @@ The app checks account authentication before every request, refuses API-key auth
 
 See [Codex authentication](https://learn.chatgpt.com/docs/auth), [Codex non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode), [Claude subscription support](https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan), and [Claude Code programmatic mode](https://code.claude.com/docs/en/headless).
 
+## Prompt agents from Home
+
+Each Claude and Codex panel has its own prompt, **Model** dropdown, **Reasoning** dropdown, run/stop controls, streamed reply, and **Save to vault** action. Select Chat for conversation, Plan to inspect a project, or Build to edit a connected project. The two-agent mission prompt has a separate draft.
+
+Model and reasoning choices come from the installed official clients. Switching to a model that does not support the current effort resets effort to Auto. Choices persist on this device and are captured for each run. The catalog describes client-supported choices; the provider checks your subscription's model access when you run a prompt.
+
+The voxel workers walk and work while their real agent runs. Real vault note links appear as floating memory blocks in the center; click a block to attach its note to the next prompt or mission. Only attached notes are sent. Saving a response creates an actual Markdown file, which the watcher indexes into both graph views. The lights, data packets, and phase rail follow runtime events, with reduced-motion support.
+
+See [Codex model discovery](https://learn.chatgpt.com/docs/app-server#list-models-modellist) and [Claude model and effort configuration](https://code.claude.com/docs/en/model-config).
+
 ## Launch a mission
 
 1. Open **Projects** and select a real project folder or create one.
@@ -44,7 +54,7 @@ The launcher also offers **Chat**, **Plan**, and **Build** separately. Chat disa
 
 ## Everything on the front screen
 
-- **Claude/Codex:** independent conversation history, streamed Markdown, copy, stop, and save-to-vault actions.
+- **Claude/Codex:** direct home prompts, model and reasoning selectors, independent conversation history, streamed Markdown, stop, and save-to-vault actions.
 - **Obsidian:** graph, notes, tags, context selection, safe Markdown editor/preview, search, create, refresh, and open the real app or note.
 - **Projects/Files:** real folder connections, Git status/diff, and confined source browsing.
 - **Terminal/Automations:** explicit status, files, diff, test, build, and check recipes with live process output. These are project actions, not background schedules.

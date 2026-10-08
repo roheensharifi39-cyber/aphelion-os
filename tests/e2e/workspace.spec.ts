@@ -1,6 +1,65 @@
 import { test, expect } from '@playwright/test';
 import { moduleDialog, openWorkspace, prompt, vault } from './bridge-fixture';
 
+test('protects saved model and reasoning choices until initial status loads', async ({ page }) => {
+  await openWorkspace(page, { deferredStatus: true, models: { claude: 'sonnet', codex: 'gpt-6-astra' }, reasoning: { claude: 'max', codex: 'xhigh' } });
+  await expect(page.getByLabel('Claude model', { exact: true })).toBeDisabled();
+  await expect(page.getByLabel('Codex reasoning', { exact: true })).toBeDisabled();
+  await page.evaluate(() => (window as any).__aphelionE2E.finishStatus());
+  await expect(page.getByLabel('Claude model', { exact: true })).toHaveValue('sonnet');
+  await expect(page.getByLabel('Claude reasoning', { exact: true })).toHaveValue('max');
+  await expect(page.getByLabel('Codex model', { exact: true })).toHaveValue('gpt-6-astra');
+  await expect(page.getByLabel('Codex reasoning', { exact: true })).toHaveValue('xhigh');
+});
+
+test('keeps each home Run button fully above its card footer', async ({ page }) => {
+  await page.setViewportSize({ width: 1250, height: 1000 });
+  await openWorkspace(page);
+  const buttons = await page.locator('.cockpit-agents .agent-card').evaluateAll(cards => cards.map(card => {
+    const run = card.querySelector('.agent-prompt-form .mc-button')!.getBoundingClientRect();
+    const footer = card.querySelector('.agent-card-footer')!.getBoundingClientRect();
+    return { label: card.getAttribute('aria-label'), runBottom: run.bottom, footerTop: footer.top };
+  }));
+  for (const button of buttons) expect(button.runBottom, `${button.label} Run must not overlap the footer`).toBeLessThanOrEqual(button.footerTop);
+});
+
+test('runs independent home prompts with saved models and reasoning and animates their own workers', async ({ page }) => {
+  await openWorkspace(page, { deferredChat: true });
+  await page.getByLabel('Claude model', { exact: true }).selectOption('sonnet');
+  await page.getByLabel('Claude reasoning', { exact: true }).selectOption('max');
+  await page.getByLabel('Codex model', { exact: true }).selectOption('gpt-6-astra');
+  await page.getByLabel('Codex reasoning', { exact: true }).selectOption('xhigh');
+  await page.getByLabel('Claude prompt', { exact: true }).fill('Reason about my architecture');
+  await expect(prompt(page)).toHaveValue('');
+  await page.getByRole('button', { name: 'Run Claude prompt', exact: true }).click();
+  await expect(page.locator('.core-worker[data-agent="claude"]')).toHaveAttribute('data-state', 'working');
+  await expect(page.locator('.core-worker[data-agent="codex"]')).toHaveAttribute('data-state', 'idle');
+  await page.getByLabel('Codex prompt', { exact: true }).fill('Explain a safe implementation');
+  await page.getByRole('button', { name: 'Run Codex prompt', exact: true }).click();
+  await expect(page.locator('.core-worker[data-agent="codex"]')).toHaveAttribute('data-state', 'working');
+  await page.evaluate(() => { (window as any).__aphelionE2E.streamChat('claude', 'Claude live answer'); (window as any).__aphelionE2E.finishChat('codex', 'Codex completed answer'); });
+  await expect(page.getByRole('region', { name: 'Claude agent status' })).toContainText('Claude live answer');
+  await expect(page.getByRole('region', { name: 'Codex agent status' })).toContainText('Codex completed answer');
+  await expect(page.locator('.core-worker[data-agent="codex"]')).toHaveAttribute('data-state', 'idle');
+  await page.evaluate(() => (window as any).__aphelionE2E.finishChat('claude', 'Claude complete'));
+  await page.reload();
+  await expect(page.getByLabel('Claude model', { exact: true })).toHaveValue('sonnet');
+  await expect(page.getByLabel('Claude reasoning', { exact: true })).toHaveValue('max');
+  await expect(page.getByLabel('Codex reasoning', { exact: true })).toHaveValue('xhigh');
+});
+
+test('attaches real graph notes and resets reasoning when the chosen model does not support it', async ({ page }) => {
+  await openWorkspace(page);
+  await page.getByRole('button', { name: 'Attach memory Project Memory', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Attach memory Project Memory', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.agent-channel-meta').first()).toContainText('1 VAULT CONTEXT');
+  await page.getByLabel('Claude model', { exact: true }).selectOption('sonnet');
+  await page.getByLabel('Claude reasoning', { exact: true }).selectOption('max');
+  await page.getByLabel('Claude model', { exact: true }).selectOption('haiku');
+  await expect(page.getByLabel('Claude reasoning', { exact: true })).toHaveValue('auto');
+  await expect(page.getByLabel('Claude reasoning', { exact: true }).locator('option')).toHaveCount(1);
+});
+
 test('renders live telemetry and moves packets only after runtime activity', async ({ page }) => {
   await openWorkspace(page);
   const core = page.getByRole('region', { name: 'Live system core', exact: true });
@@ -32,7 +91,7 @@ test('opens every tool and the command palette without key setup fields', async 
   await page.getByRole('button', { name: 'Close module', exact: true }).click();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.locator('input[type="password"]')).toHaveCount(0);
-  await expect(page.getByLabel('Claude model', { exact: true })).toBeVisible();
+  await expect(page.locator('.settings-page').getByLabel('Claude model', { exact: true })).toBeVisible();
   await expect(page.getByLabel('GitHub repository', { exact: true })).toBeVisible();
 });
 
@@ -310,10 +369,10 @@ test('keeps note creation stable until its pending write completes', async ({ pa
 
 test('waits for stored preferences before mounting settings fields', async ({ page }) => {
   await openWorkspace(page, { deferredStatus: true, models: { claude: 'claude-selected', codex: 'codex-selected' }, repo: 'https://github.com/example/selected' }, '#settings');
-  await expect(page.getByLabel('Claude model', { exact: true })).not.toBeVisible();
+  await expect(page.locator('.settings-page').getByLabel('Claude model', { exact: true })).not.toBeVisible();
   await page.evaluate(() => (window as any).__aphelionE2E.finishStatus());
-  await expect(page.getByLabel('Claude model', { exact: true })).toHaveValue('claude-selected');
-  await expect(page.getByLabel('Codex model', { exact: true })).toHaveValue('codex-selected');
+  await expect(page.locator('.settings-page').getByLabel('Claude model', { exact: true })).toHaveValue('claude-selected');
+  await expect(page.locator('.settings-page').getByLabel('Codex model', { exact: true })).toHaveValue('codex-selected');
   await expect(page.getByLabel('GitHub repository', { exact: true })).toHaveValue('https://github.com/example/selected');
 });
 

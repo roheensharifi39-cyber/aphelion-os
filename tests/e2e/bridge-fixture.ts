@@ -1,7 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 import type { Agent, AphelionBridge, Note, ProjectInfo, RuntimeEvent, RuntimeSnapshot, Status } from '../../src/types';
 
-export type BridgeOptions = { connected?: { claude: boolean; codex: boolean }; project?: ProjectInfo | null; emptyVault?: boolean; deferredChat?: boolean; deferredMission?: boolean; deferredRead?: string; deferredSave?: boolean; deferredCreate?: boolean; deferredStatus?: boolean; statusDelay?: number; models?: { claude: string; codex: string }; repo?: string; obsidianRunning?: boolean };
+export type BridgeOptions = { connected?: { claude: boolean; codex: boolean }; project?: ProjectInfo | null; emptyVault?: boolean; deferredChat?: boolean; deferredMission?: boolean; deferredRead?: string; deferredSave?: boolean; deferredCreate?: boolean; deferredStatus?: boolean; statusDelay?: number; models?: { claude: string; codex: string }; reasoning?: { claude: string; codex: string }; repo?: string; obsidianRunning?: boolean };
 
 // The external bridge owns paid CLI calls, native windows, and personal filesystem I/O.
 // Every test installs this complete boundary before app startup. Production components
@@ -17,9 +17,9 @@ export async function openWorkspace(page: Page, options: BridgeOptions = {}, has
     ];
     const initialProject: ProjectInfo = { path: 'C:/FixtureProjects/Launchpad', name: 'Launchpad', branch: 'main', dirty: false };
     const stored = JSON.parse(localStorage.getItem(key) || 'null');
-    const state: { notes: Note[]; project: ProjectInfo | null; connected: { claude: boolean; codex: boolean }; models: { claude: string; codex: string }; repo: string; obsidianRunning: boolean; activeJobs: number; cpu: number; heartbeat: number } = stored || {
+    const state: { notes: Note[]; project: ProjectInfo | null; connected: { claude: boolean; codex: boolean }; models: { claude: string; codex: string }; reasoning?: { claude: string; codex: string }; repo: string; obsidianRunning: boolean; activeJobs: number; cpu: number; heartbeat: number } = stored || {
       notes: initialNotes, project: options.project === undefined ? initialProject : options.project,
-      connected: options.connected || { claude: true, codex: true }, models: options.models || { claude: 'auto', codex: 'auto' },
+      connected: options.connected || { claude: true, codex: true }, models: options.models || { claude: 'auto', codex: 'auto' }, reasoning: options.reasoning || { claude: 'auto', codex: 'auto' },
       repo: options.repo || 'https://github.com/example/launchpad', obsidianRunning: options.obsidianRunning ?? true, activeJobs: 0, cpu: 37, heartbeat: 1,
     };
     const persist = () => localStorage.setItem(key, JSON.stringify(state));
@@ -33,7 +33,7 @@ export async function openWorkspace(page: Page, options: BridgeOptions = {}, has
     const statusReads: (() => void)[] = [];
     const opens: (string | null)[] = [];
     function obsidian() { return { installed: true, running: state.obsidianRunning, vaultPath: 'C:/FixtureVault', watching: true, indexedAt: 1700000000000, noteCount: state.notes.length, detail: 'Native Obsidian fixture boundary' }; }
-    function status(): Status { return { desktop: false, connected: clone(state.connected), auth: { claude: { installed: true, signedIn: state.connected.claude, mode: state.connected.claude ? 'subscription' : 'signed-out', detail: state.connected.claude ? 'Claude subscription connected' : 'Claude subscription sign-in required' }, codex: { installed: true, signedIn: state.connected.codex, mode: state.connected.codex ? 'subscription' : 'signed-out', detail: state.connected.codex ? 'Codex subscription connected' : 'Codex subscription sign-in required' } }, models: clone(state.models), vaultPath: 'C:/FixtureVault', repo: state.repo }; }
+    function status(): Status { return { desktop: false, connected: clone(state.connected), auth: { claude: { installed: true, signedIn: state.connected.claude, mode: state.connected.claude ? 'subscription' : 'signed-out', detail: state.connected.claude ? 'Claude subscription connected' : 'Claude subscription sign-in required' }, codex: { installed: true, signedIn: state.connected.codex, mode: state.connected.codex ? 'subscription' : 'signed-out', detail: state.connected.codex ? 'Codex subscription connected' : 'Codex subscription sign-in required' } }, models: clone(state.models), reasoning: clone(state.reasoning || { claude: 'auto', codex: 'auto' }), vaultPath: 'C:/FixtureVault', repo: state.repo }; }
     function snapshot(): RuntimeSnapshot { return { time: Date.now(), cpu: state.cpu, memory: { used: 6_442_450_944, total: 10_737_418_240, percent: 60 }, network: { online: true, clients: 2, received: 2048, sent: 1024 }, processes: [{ pid: 5001, name: 'Local engine', role: 'system' }, { pid: 5002, name: 'Obsidian', role: 'vault' }], activeJobs: state.activeJobs, project: clone(state.project), obsidian: obsidian(), heartbeat: state.heartbeat }; }
     function emit(event: Omit<RuntimeEvent, 'id' | 'time'>) { const complete = { ...event, id: crypto.randomUUID(), time: Date.now() }; runtimeHandlers.forEach(handler => handler(complete)); }
     function telemetry() { state.heartbeat++; emit({ type: 'telemetry', source: 'system', data: snapshot() }); }
@@ -52,8 +52,12 @@ export async function openWorkspace(page: Page, options: BridgeOptions = {}, has
       entry.resolve({ plan, build, project: clone(state.project), receiptPath: 'Mission receipt.md' });
     }
     const api: AphelionBridge = {
+      async modelCatalog() { return {
+        claude: { models: [{ id: 'sonnet', name: 'Sonnet', description: 'Claude catalog boundary', efforts: ['low', 'medium', 'high', 'max'], isDefault: true }, { id: 'haiku', name: 'Haiku', description: 'Claude catalog boundary', efforts: [] }] },
+        codex: { models: [{ id: 'gpt-6-astra', name: 'GPT-6 Astra', description: 'Codex catalog boundary', efforts: ['low', 'medium', 'high', 'xhigh', 'max', 'ultra'], isDefault: true }, { id: 'gpt-6-luna', name: 'GPT-6 Luna', description: 'Codex catalog boundary', efforts: ['low', 'medium', 'high'] }] }
+      }; },
       async status() { if (options.deferredStatus) return new Promise(resolve => statusReads.push(() => resolve(status()))); if (options.statusDelay) await new Promise(resolve => setTimeout(resolve, options.statusDelay)); return status(); },
-      async configure(input) { if (input.models) state.models = clone(input.models); if (input.repo !== undefined) state.repo = input.repo; persist(); return status(); },
+      async configure(input) { if (input.models) state.models = clone(input.models); if (input.reasoning) state.reasoning = clone(input.reasoning); if (input.repo !== undefined) state.repo = input.repo; persist(); return status(); },
       async login(agent) { state.connected[agent] = true; persist(); return status(); },
       async runtime() { return snapshot(); },
       onRuntimeEvent(handler) { runtimeHandlers.add(handler); return () => runtimeHandlers.delete(handler); },
