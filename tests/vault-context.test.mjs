@@ -54,4 +54,14 @@ describe('automatic selected-vault context', () => {
     const controller = new AbortController(); controller.abort();
     await expect(buildVaultContext(root, question('research'), [], controller.signal)).rejects.toMatchObject({ name: 'AbortError' });
   });
+  it('keeps private folders and explicitly excluded notes out of automatic provider context', async () => {
+    await note('Private/Profile.md', 'research private folder content');
+    await note('Projects/Secrets/Research.md', 'research secret folder content');
+    await note('Home.md', '---\nprivate: true\n---\nresearch private home');
+    await note('Notes/Research.md', '---\naphelion_context: exclude\n---\nresearch excluded content');
+    expect((await buildVaultContext(root, question('research'))).notes).toEqual([]);
+    const explicitlyShared = await buildVaultContext(root, question('research'), ['Home.md']);
+    expect(explicitlyShared.notes).toHaveLength(1);
+    expect(explicitlyShared.notes[0].source).toBe('pinned');
+  });
 });

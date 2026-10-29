@@ -14,3 +14,16 @@ playwright-report/
 .obsidian/
 .impeccable/review/
 .impeccable/hook.cache.json
+
+# User data must never be part of the app source or a release
+vault/
+vault-academic/
+VAULT-Academic/
+Aphelion/Conversations/
+Aphelion/Images/
+auth.json
+preferences.json
+openai.json
+chatgpt-subscription.json
+*.pem
+*.key

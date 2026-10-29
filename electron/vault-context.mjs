@@ -9,7 +9,12 @@ function words(text) {
     .filter(word => word.length > 2 && !STOP.has(word));
 }
 const background = path => /^(?:home|now|context|project memory|about me)\.md$/i.test(path) || /^profile\/[^/]+\.md$/i.test(path);
-const searchable = path => !/^(?:sources|archives|attachments|aphelion)\//i.test(path);
+const searchable = path => !/^(?:sources|archives|attachments|aphelion)\//i.test(path)
+  && !/(?:^|\/)(?:private|secrets|credentials)(?:\/|$)/i.test(path);
+function privateNote(content) {
+  const properties = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(content)?.[1] || '';
+  return /^(?:private:\s*true|aphelion_context:\s*exclude)\s*(?:#.*)?$/im.test(properties);
+}
 function score(text, query) {
   const terms = new Set(words(text));
   return query.reduce((sum, term) => sum + Number(terms.has(term)), 0);
@@ -38,6 +43,7 @@ export async function buildVaultContext(vaultPath, messages, explicit = [], sign
     stopped();
     try {
       const content = (await readNote(vaultPath, note.path)).content.slice(0, 16000);
+      if (privateNote(content)) continue;
       loaded.push({ path: note.path, content, score: score(note.path, query) * 5 + score(content.slice(0, 16000), query) });
     } catch {
       stopped();
