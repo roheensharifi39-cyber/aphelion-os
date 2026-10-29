@@ -17,6 +17,9 @@ Knowledge provides note search, editing, Markdown preview, tags, recent notes, g
 ## Automatic Vault Memory
 Text requests to Claude, Codex and ChatGPT, plus project missions, read background notes and query-relevant Markdown from the selected vault automatically on every turn. Context is bounded to 24,000 automatic excerpt characters and up to eight explicit pins. Source/archive/attachment/generated-conversation folders are excluded from automatic retrieval; pins remain available for exact reference. Notes are quoted data, not permission or higher-priority instructions. Runtime events list notes actually read, and saved reply links include the context used. Changing vault changes memory scope; chat mode does not need filesystem tools.
 
+## Desktop Delivery
+Windows installs use a per-user NSIS installer. Every push to main runs tests/build and publishes a versioned GitHub release with its update metadata. Installed copies check at launch and every 15 minutes, download stable upgrades, and install on normal app quit. Never force a restart during work. Preserve user data and vaults across installs. Portable, development and test copies skip automatic updates. See docs/desktop-updates.md.
+
 ## Brand Commitments
 The supplied Neuron particle generator, black-and-white palette, pale Cormorant Garamond headings, Manrope reading text, and neutral smoked glass define the workspace. Preserve the source generator and stable per-vault form. The brand is the text-only aphelion OS label aligned at the left; the orbital SVG mark was removed. Keep the ghost cursor trail and native pointer; the dot grid was removed.
 ## Accessibility & Inclusion

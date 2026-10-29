@@ -58,7 +58,7 @@ export async function packageWindows() {
   const { build, Platform } = await import('electron-builder');
   const artifacts = await build({
     projectDir: projectPath,
-    targets: Platform.WINDOWS.createTarget('portable'),
+    targets: Platform.WINDOWS.createTarget(['nsis', 'portable']),
     publish: 'never',
     config: { directories: { output: outputDirectory } },
   });
@@ -78,6 +78,15 @@ export async function packageWindows() {
   const releaseDirectory = await realpath(releasePath);
   if (!isWithin(projectPath, releaseDirectory)) throw new Error('The release folder must remain inside the project.');
   const portableExecutable = join(releaseDirectory, portableName);
+  const installerName = `Aphelion-OS-${manifest.version}-setup.exe`;
+  const updateNames = [installerName, installerName + '.blockmap', 'latest.yml'];
+  for (const name of updateNames) {
+    const source = join(outputDirectory, name);
+    await stat(source);
+    const destination = join(releaseDirectory, name);
+    await assertArtifactDestination(destination);
+    await copyFile(source, destination);
+  }
   const packageInfo = join(releaseDirectory, 'package-info.json');
   await assertArtifactDestination(portableExecutable);
   await assertArtifactDestination(packageInfo);
@@ -85,10 +94,12 @@ export async function packageWindows() {
   await writeFile(packageInfo, `${JSON.stringify({
     version: manifest.version,
     portableExecutable,
+    installerExecutable: join(releaseDirectory, installerName),
     unpackedExecutable,
     buildDirectory,
   }, null, 2)}\n`);
   console.log(`Portable app: ${portableExecutable}`);
+  console.log(`Auto-updating installer: ${join(releaseDirectory, installerName)}`);
   console.log(`Desktop smoke executable: ${unpackedExecutable}`);
   console.log('Build files are retained in the local temporary folder. Existing release folders are preserved.');
 }

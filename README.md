@@ -6,7 +6,7 @@ A live, local AI command center with Minecraft-style buttons, pixel typography, 
 
 ## Open it
 
-On Windows, open `release/Aphelion-OS-0.2.0-portable.exe`. No installer is needed. The app detects your existing official Claude Code and Codex account sign-ins. Use **Settings → Check connections** to refresh them.
+On Windows, install the latest `Aphelion-OS-<version>-setup.exe` from [GitHub Releases](https://github.com/roheensharifi39-cyber/aphelion-os/releases/latest). Use the Desktop or Start Menu shortcut afterward. Installed copies check for updates at startup and every 15 minutes, download them in the background, and install when you close the app. Each push to `main` builds and publishes a tested Windows release. See [desktop update details](docs/desktop-updates.md). Portable executables remain available as manual-update backups. The app detects your existing official Claude Code and Codex account sign-ins.
 
 For development, install Node.js 24 or later:
 

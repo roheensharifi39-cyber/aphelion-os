@@ -1,8 +1,8 @@
 {
   "name": "aphelion-os",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "A Minecraft-inspired, local-first AI desktop workspace.",
+  "description": "A local AI workspace with shared Obsidian memory.",
   "type": "module",
   "main": "electron/main.cjs",
   "author": "Aphelion",
@@ -21,6 +21,7 @@
     "@fontsource/manrope": "^5.3.0",
     "@fontsource/pixelify-sans": "5.3.0",
     "@react-spring/web": "^10.1.2",
+    "electron-updater": "6.8.11",
     "jose": "^6.2.13",
     "lucide-react": "^1.63.0",
     "react": "19.3.0",
@@ -55,11 +56,31 @@
       "package.json"
     ],
     "win": {
-      "target": "portable",
+      "target": [
+        "nsis",
+        "portable"
+      ],
       "signAndEditExecutable": false
     },
     "portable": {
       "artifactName": "Aphelion-OS-${version}-portable.exe"
-    }
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "Aphelion-OS-${version}-setup.exe"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "roheensharifi39-cyber",
+        "repo": "aphelion-os",
+        "releaseType": "release"
+      }
+    ]
   }
 }

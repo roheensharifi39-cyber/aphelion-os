@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, Menu, safeStorage } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, safeStorage, Notification } = require('electron');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 if (process.env.APHELION_TEST_HOME) app.setPath('userData', path.resolve(process.env.APHELION_TEST_HOME));
@@ -11,6 +11,7 @@ function validSender(event) {
   if (!window || event.sender !== window.webContents || event.senderFrame !== event.sender.mainFrame || (devURL ? url !== devURL && url !== devURL + '/' : url !== indexURL)) throw new Error('This action did not come from the Aphelion command center.');
 }
 app.whenReady().then(async () => {
+  app.setAppUserModelId('studio.aphelion.os');
   const { createRuntime } = await import('./runtime.mjs');
   runtime = await createRuntime({ dataDirectory: app.getPath('userData'), desktop: true, openaiSecureStorage: safeStorage, openExternal: url => shell.openExternal(url), getNetwork: () => ({ online: true, clients: window && !window.isDestroyed() ? 1 : 0, sent, received }), selectFolder: async () => { const result = await dialog.showOpenDialog(window, { title: 'Choose project or Obsidian vault folder', properties: ['openDirectory'] }); return result.canceled ? null : result.filePaths[0]; } });
   Menu.setApplicationMenu(null);
@@ -24,5 +25,10 @@ app.whenReady().then(async () => {
   offEvent = runtime.onEvent(event => forward('aphelion:runtimeEvent', event));
   offDelta = runtime.onDelta(event => forward('aphelion:delta', event));
   if (devURL) await window.loadURL(devURL); else await window.loadFile(path.join(__dirname, '../dist/index.html'));
+  const { startUpdates } = require('./updates.cjs');
+  const { autoUpdater } = require('electron-updater');
+  startUpdates({ app, updater: autoUpdater, notify: (title, body) => {
+    if (Notification.isSupported()) new Notification({ title, body }).show();
+  } });
 }).catch(error => { dialog.showErrorBox('Aphelion could not start', error.message); app.quit(); });
 app.on('window-all-closed', () => { offEvent?.(); offDelta?.(); runtime?.dispose(); app.quit(); });
