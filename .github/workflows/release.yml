@@ -19,6 +19,12 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Use canonical Windows temporary paths
+        shell: pwsh
+        run: |
+          $canonicalTemp = node -e "console.log(require('node:fs').realpathSync.native(require('node:os').tmpdir()))"
+          "TEMP=$canonicalTemp" >> $env:GITHUB_ENV
+          "TMP=$canonicalTemp" >> $env:GITHUB_ENV
       - name: Assign increasing release version
         shell: pwsh
         run: |
