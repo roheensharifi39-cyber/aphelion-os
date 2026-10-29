@@ -73,7 +73,7 @@ describe('OpenAI credential boundary', () => {
     expect(saved).not.toContain(key); expect(JSON.parse(saved).encryptedApiKey).toBeTruthy();
     const restored = await start({ secureStorage: undefined });
     expect(restored.status().configured).toBe(true);
-  });
+  }, 20000); // Cold PowerShell/DPAPI startup on hosted Windows runners.
 });
 
 describe('OpenAI network boundary', () => {
