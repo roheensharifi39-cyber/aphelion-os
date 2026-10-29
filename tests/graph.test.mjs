@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { graphFromNotes } from '../electron/graph-data.mjs';
+import { buildVaultGraph } from '../electron/graph.mjs';
+import { mkdtemp, writeFile, utimes, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 describe('vault knowledge graph', () => {
   it('connects actual wiki and relative Markdown links without fabricating missing notes', () => {
@@ -21,5 +25,22 @@ describe('vault knowledge graph', () => {
     expect(graph.nodes[0].tags).toEqual(['hello']);
     expect(graph.total).toBe(40);
     expect(graph.truncated).toBe(true);
+  });
+  it('indexes newest memories before alphabetic files and keeps older notes selectable', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'aphelion-graph-'));
+    try {
+      for (let i = 0; i < 35; i++) {
+        const path = join(root, `A${String(i).padStart(2, '0')}.md`);
+        await writeFile(path, `# Older note ${i}`);
+        await utimes(path, new Date('2020-01-01'), new Date('2020-01-01'));
+      }
+      await writeFile(join(root, 'Z-newest-conversation.md'), '# New memory\n\n[[A34]] #conversation');
+      const graph = await buildVaultGraph(root);
+      expect(graph.nodes).toHaveLength(36);
+      expect(graph.nodes[0]).toMatchObject({ path: 'Z-newest-conversation.md', tags: ['conversation'] });
+      expect(graph.nodes.some(node => node.path === 'A34.md')).toBe(true);
+      expect(graph.edges).toContainEqual({ from: 'Z-newest-conversation.md', to: 'A34.md' });
+      expect(graph.truncated).toBe(true);
+    } finally { await rm(root, { recursive: true, force: true }); }
   });
 });

@@ -1,0 +1,519 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T00:27:00.642078Z",
+  "title": "Design System: Aphelion OS",
+  "extensions": {
+    "colorMeta": {
+      "field-graphite": {
+        "role": "primary",
+        "displayName": "Field Graphite",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "particle-white": {
+        "role": "primary",
+        "displayName": "Particle White",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "dust-silver": {
+        "role": "neutral",
+        "displayName": "Dust Silver",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "scene-black": {
+        "role": "neutral",
+        "displayName": "Scene Black",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Background",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Text",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "silver": {
+        "role": "neutral",
+        "displayName": "Silver",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "interface-white": {
+        "role": "neutral",
+        "displayName": "Interface White",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "prompt-white": {
+        "role": "neutral",
+        "displayName": "Prompt White",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Focus",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "input-background": {
+        "role": "neutral",
+        "displayName": "Input Background",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "control-background": {
+        "role": "neutral",
+        "displayName": "Control Background",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "control-hover": {
+        "role": "neutral",
+        "displayName": "Control Hover",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      },
+      "connected": {
+        "role": "neutral",
+        "displayName": "Connected",
+        "tonalRamp": [
+          "oklch(15.00% 0 0)",
+          "oklch(26.43% 0 0)",
+          "oklch(37.86% 0 0)",
+          "oklch(49.29% 0 0)",
+          "oklch(60.71% 0 0)",
+          "oklch(72.14% 0 0)",
+          "oklch(83.57% 0 0)",
+          "oklch(95.00% 0 0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Semantic headings on secondary working surfaces; no giant headline on the overview."
+      },
+      "brand": {
+        "displayName": "Brand",
+        "purpose": "Quiet text-only aphelion OS label aligned at the left header inset; no orbital mark."
+      },
+      "prompt": {
+        "displayName": "Prompt",
+        "purpose": "Italic Cormorant Garamond prompt in the broad shallow composer."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Shared interface and utility copy."
+      },
+      "content": {
+        "displayName": "Content",
+        "purpose": "Readable overview response content with generous line spacing."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Small serif connection labels on the immersive overview."
+      },
+      "utility": {
+        "displayName": "Utility",
+        "purpose": "Compact sans-serif actions within secondary tools."
+      }
+    },
+    "shadows": [
+      {
+        "name": "floating-glass",
+        "value": "0 12px 36px #0004, inset 0 1px 0 #ffffff09",
+        "purpose": "Soft peripheral depth and faint light-catching inset edge."
+      },
+      {
+        "name": "glass-popover",
+        "value": "0 14px 40px #0005",
+        "purpose": "Local depth above the composer."
+      },
+      {
+        "name": "dialog",
+        "value": "0 22px 80px #0009",
+        "purpose": "Modal tool priority above the persistent world."
+      },
+      {
+        "name": "active-navigation-dot",
+        "value": "0 2px 9px #ffffff66",
+        "purpose": "Tiny light-catching point under the active navigation label."
+      }
+    ],
+    "motion": [
+      {
+        "name": "heading-word-out",
+        "value": "opacity: 0; scale: 1.4; filter: blur(6px)",
+        "purpose": "Exact spring-text-engine 0.1.5 once-only heading start."
+      },
+      {
+        "name": "heading-word-in",
+        "value": "opacity: 1; scale: 1; filter: blur(0px)",
+        "purpose": "Exact settled heading state."
+      },
+      {
+        "name": "heading-spring",
+        "value": "tension: 200; friction: 24; wordStagger: 55ms; mode: once",
+        "purpose": "Shared semantic-heading entrance; reduced motion renders plain headings."
+      },
+      {
+        "name": "immersive-motion",
+        "value": "speed: 1.4; source Neuron spin and wobble; autorotate: false",
+        "purpose": "Source procedural Neuron motion; freeze time, morph, rotation, and pointer translation for pause or reduced motion."
+      },
+      {
+        "name": "immersive-pointer-translation",
+        "value": "x: pointer.x * .055; y: pointer.y * .035; response: min(1, dt * 3)",
+        "purpose": "Small pointer-driven translation of the sculpture, disabled by reduced motion."
+      },
+      {
+        "name": "cursor-ghost-trail",
+        "value": "count: 6; size: 26px; head follow: .26; max blur: 5px; fade: min(1, distance / 13)",
+        "purpose": "Additive arrows disappear at rest; native cursor remains visible."
+      },
+      {
+        "name": "surface-state-changes",
+        "value": "animation: none; transition: none",
+        "purpose": "Legacy decorative CSS motion is retired; spring headings and managed graphics/cursor loops own motion."
+      },
+      {
+        "name": "stable-markdown-headings",
+        "value": "module-scope renderer identity",
+        "purpose": "Streaming and telemetry preserve completed one-time heading entrances."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-desktop-min",
+        "value": "1800px"
+      },
+      {
+        "name": "compact-desktop-max",
+        "value": "1150px"
+      },
+      {
+        "name": "wrapped-header-max",
+        "value": "850px"
+      },
+      {
+        "name": "compact-field-under",
+        "value": "700px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "600px"
+      },
+      {
+        "name": "narrow-mobile-max",
+        "value": "390px"
+      },
+      {
+        "name": "short-desktop-height-max",
+        "value": "650px"
+      },
+      {
+        "name": "landscape-height-max",
+        "value": "500px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Utility button",
+      "kind": "button",
+      "refersTo": "utility-button",
+      "description": "Compact working action for secondary tools; immediate tonal response, no lift.",
+      "html": "<div class=\"ds-preview\"><button class=\"ds-utility\">Open conversation</button></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-utility{font-family:var(--body,'Manrope',sans-serif);border:1px solid #ffffff28;border-radius:6px;background:#252525;color:#e0e0e0;font-size:11px;min-height:33px;padding:8px 12px;letter-spacing:0;box-shadow:none;cursor:pointer;}.ds-utility:hover:not(:disabled),.ds-utility:active:not(:disabled){background:#444;color:#fff;border-color:#ffffff4d;transform:none;box-shadow:none;}.ds-utility:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-utility:disabled{cursor:default;opacity:.45;}"
+    },
+    {
+      "name": "Prominent utility button",
+      "kind": "button",
+      "refersTo": "utility-button-prominent",
+      "description": "The inherited prominent secondary-tool variant uses a pale fill; the overview sends through its circular composer action.",
+      "html": "<div class=\"ds-preview\"><button class=\"ds-utility ds-prominent\">Save note</button></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-utility{font-family:var(--body,'Manrope',sans-serif);border:1px solid #ffffff28;border-radius:6px;background:#252525;color:#e0e0e0;font-size:11px;min-height:33px;padding:8px 12px;letter-spacing:0;box-shadow:none;cursor:pointer;}.ds-utility:hover:not(:disabled),.ds-utility:active:not(:disabled){background:#444;color:#fff;border-color:#ffffff4d;transform:none;box-shadow:none;}.ds-utility:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-utility:disabled{cursor:default;opacity:.45;}.ds-prominent{background:#ddd;color:#111;border-color:transparent;}"
+    },
+    {
+      "name": "Ghost utility button",
+      "kind": "button",
+      "refersTo": "utility-button-ghost",
+      "description": "A quieter action within a work surface or dialog.",
+      "html": "<div class=\"ds-preview\"><button class=\"ds-utility ds-ghost\">Cancel</button></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-utility{font-family:var(--body,'Manrope',sans-serif);border:1px solid #ffffff28;border-radius:6px;background:#252525;color:#e0e0e0;font-size:11px;min-height:33px;padding:8px 12px;letter-spacing:0;box-shadow:none;cursor:pointer;}.ds-utility:hover:not(:disabled),.ds-utility:active:not(:disabled){background:#444;color:#fff;border-color:#ffffff4d;transform:none;box-shadow:none;}.ds-utility:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-utility:disabled{cursor:default;opacity:.45;}.ds-ghost{background:transparent;border-color:transparent;}"
+    },
+    {
+      "name": "Utility text input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Dark compact field with a thin boundary and visible keyboard focus.",
+      "html": "<div class=\"ds-preview\"><input class=\"ds-input\" aria-label=\"Search vault notes\" placeholder=\"Search notes\" /></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-input{font-family:var(--body,'Manrope',sans-serif);border-radius:6px;background:#101010;color:#eee;font-size:12px;border:1px solid #ffffff28;box-shadow:none;padding:9px;caret-color:#fff;}.ds-input::placeholder{color:#a0afba;}.ds-input:focus-visible{outline:1px solid #777;outline-offset:3px;}"
+    },
+    {
+      "name": "Overview navigation",
+      "kind": "nav",
+      "description": "Three restrained serif actions; the active view has a fine fading underline and small light-catching dot.",
+      "html": "<div class=\"ds-preview\"><nav class=\"ds-nav\" aria-label=\"Main navigation\"><button class=\"ds-current\" aria-current=\"page\">Overview</button><button>Knowledge</button><button>Sessions</button></nav></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-nav{display:flex;align-items:center;gap:26px;height:86px;}.ds-nav button{font-family:var(--display,'Cormorant Garamond',Georgia,serif);position:relative;height:100%;padding:0 4px;border:0;background:transparent;color:#f1f1f1;font-size:16px;text-shadow:0 1px 10px #000;cursor:pointer;}.ds-nav button:hover{color:#f1f1f1;}.ds-nav button:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-nav .ds-current{color:#f1f1f1;}.ds-nav .ds-current::after{content:\"\";position:absolute;left:0;right:0;bottom:24px;height:1px;background:linear-gradient(90deg,transparent,#fff,transparent);}.ds-nav .ds-current::before{content:\"\";position:absolute;left:calc(50% - 2px);bottom:22px;width:4px;height:4px;border-radius:50%;background:#fff;box-shadow:0 2px 9px #ffffff66;}"
+    },
+    {
+      "name": "Utility badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Supporting status tag used inside the secondary tools.",
+      "html": "<div class=\"ds-preview\"><span class=\"ds-badge\">Local</span></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-badge{font-family:var(--body,'Manrope',sans-serif);display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 8px;line-height:1.1;white-space:nowrap;letter-spacing:.5px;font-size:9px;border:1px solid #ffffff24;background:#252525;color:#ddd;border-radius:4px;box-shadow:none;}"
+    },
+    {
+      "name": "Floating glass panel",
+      "kind": "card",
+      "refersTo": "floating-glass",
+      "description": "Low-opacity suspended peripheral material; its darker preview canvas makes the thin edge and transparent tint visible.",
+      "html": "<div class=\"ds-preview\"><section class=\"ds-glass ds-panel\"><h2>Intelligence</h2><p>Agent connections</p></section></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-glass{background:linear-gradient(125deg,#ffffff0d,#0a0a0a38);border:1px solid #ffffff38;border-radius:15px;backdrop-filter:blur(15px) saturate(0);box-shadow:0 12px 36px #0004,inset 0 1px 0 #ffffff09;}.ds-panel{width:245px;max-width:100%;padding:15px 20px;}.ds-panel h2{font-family:var(--display,'Cormorant Garamond',Georgia,serif);font-size:21px;font-weight:400;letter-spacing:-.025em;line-height:1.1;margin:0;color:#f1f1f1;}.ds-panel p{font-family:var(--body,'Manrope',sans-serif);font-size:12px;line-height:1.65;color:#aaa;margin:12px 0 0;}"
+    },
+    {
+      "name": "Command composer",
+      "kind": "custom",
+      "refersTo": "composer",
+      "description": "Slightly frostier glass with italic prompt, a divided option bar, and a circular send control. Preview controls illustrate appearance; the app binds them to real state.",
+      "html": "<div class=\"ds-preview\"><section class=\"ds-composer\"><textarea class=\"ds-prompt\" rows=\"1\" aria-label=\"Your prompt\" placeholder=\"Where shall we go from here?\"></textarea><div class=\"ds-options\"><label><select aria-label=\"Agent\"><option>Claude</option><option>Codex</option></select></label><label><select aria-label=\"Mode\"><option>Chat</option><option>Plan</option><option>Build</option><option>Mission</option></select></label><button class=\"ds-attach\">Attach context</button><button class=\"ds-send\" aria-label=\"Launch mission\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 20V4M5 11l7-7 7 7\" /></svg></button></div></section></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-glass{background:linear-gradient(125deg,#ffffff0d,#0a0a0a38);border:1px solid #ffffff38;border-radius:15px;backdrop-filter:blur(15px) saturate(0);box-shadow:0 12px 36px #0004,inset 0 1px 0 #ffffff09;}.ds-composer{background:linear-gradient(125deg,#ffffff12,#10101033 60%,#08080833);border:1px solid #ffffff50;border-radius:19px;backdrop-filter:blur(22px) saturate(0);box-shadow:0 12px 36px #0004,inset 0 1px 0 #ffffff09;}.ds-prompt{font-family:var(--display,'Cormorant Garamond',Georgia,serif);display:block;box-sizing:border-box;width:100%;min-height:76px;max-height:25vh;resize:vertical;border:0;border-radius:19px 19px 0 0;padding:22px 30px 13px;margin:0;background:transparent;color:#f1f1f1;font-size:30px;font-style:italic;line-height:1.35;box-shadow:none;}.ds-prompt::placeholder{color:#f1f1f1;opacity:1;}.ds-prompt:focus-visible{outline:2px solid #fff;outline-offset:-7px;}.ds-options{display:flex;gap:15px;align-items:center;min-height:58px;padding:8px 22px 10px 28px;border-top:1px solid #ffffff28;}.ds-options select,.ds-attach{font-family:var(--display,'Cormorant Garamond',Georgia,serif);border:0;background:transparent;color:#ddd;font-size:14px;padding:7px 0;min-height:30px;}.ds-options select option{background:#161616;color:#eee;}.ds-options select:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-attach:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-send{display:grid;place-items:center;flex-shrink:0;margin-left:auto;width:42px;height:42px;min-height:42px;padding:8px;border-radius:50%;background:#ffffff13;border:1px solid #ffffff80;color:#fff;cursor:pointer;}.ds-send svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.5;}.ds-send:hover:enabled{background:#ffffff30;}.ds-send:disabled{opacity:.62;cursor:default;}.ds-send:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-send.ds-stop{color:#fff;border-color:#ffffffb3;background:#ffffff20;}"
+    },
+    {
+      "name": "Workspace switcher",
+      "kind": "button",
+      "refersTo": "workspace-switcher",
+      "description": "A compact smoked-glass control for the actual vault or project; long names truncate.",
+      "html": "<div class=\"ds-preview\"><button class=\"ds-switch\" aria-label=\"Switch project\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 7V5h7l2 2h9v12H3Z\" /></svg><span>Select project</span><span class=\"ds-chevron\" aria-hidden=\"true\">⌄</span></button></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-switch{font-family:var(--display,'Cormorant Garamond',Georgia,serif);display:flex;align-items:center;justify-content:flex-start;gap:12px;min-width:165px;max-width:220px;min-height:40px;border:1px solid #ffffff36;border-radius:12px;background:#08080826;backdrop-filter:blur(14px) saturate(0);color:#eee;font-size:15px;padding:9px 14px;cursor:pointer;}.ds-switch svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.5;flex-shrink:0;}.ds-switch>span:not(.ds-chevron){overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}.ds-switch .ds-chevron{font-family:var(--body,'Manrope',sans-serif);margin-left:auto;padding-left:10px;font-size:15px;color:#ddd;}.ds-switch:hover{background:#ffffff12;border-color:#ffffff65;}.ds-switch:focus-visible{outline:1px solid #777;outline-offset:3px;}"
+    },
+    {
+      "name": "Provider row",
+      "kind": "custom",
+      "description": "Quiet provider selection with a runtime-derived label. This static specimen uses Checking rather than claiming a connection.",
+      "html": "<div class=\"ds-preview\"><button class=\"ds-provider\" aria-label=\"Select Claude\"><svg viewBox=\"0 0 28 28\" aria-hidden=\"true\"><path d=\"M14 2v24M2 14h24M5 5l18 18M5 23 23 5M8 2l12 24M2 8l24 12M2 20 24 8M8 26 20 2\" /></svg><strong>Claude</strong><span class=\"ds-state\"><i></i>Checking</span></button></div>",
+      "css": ".ds-preview{padding:24px;background:#000;color:var(--text,#ededed);border-radius:16px;}.ds-provider{display:flex;align-items:center;gap:12px;min-height:51px;width:245px;max-width:100%;padding:11px 2px;border:0;border-radius:5px;background:none;text-align:left;color:#f1f1f1;cursor:pointer;}.ds-provider>svg{width:27px;height:27px;stroke:#ddd;stroke-width:1.4;fill:none;flex-shrink:0;}.ds-provider>strong{font-family:var(--display,'Cormorant Garamond',Georgia,serif);font-size:16px;font-weight:400;}.ds-provider:hover{background:#d4e5fa0a;}.ds-provider:hover strong{color:#fff;}.ds-provider:focus-visible{outline:1px solid #777;outline-offset:3px;}.ds-state{font-family:var(--display,'Cormorant Garamond',Georgia,serif);display:flex;align-items:center;gap:5px;font-size:12px;color:#ddd;margin-left:auto;white-space:nowrap;}.ds-state i{width:7px;height:7px;border-radius:50%;background:#777;}.ds-state.ds-connected i{background:#eee;}"
+    },
+    {
+      "name": "Floating chat window",
+      "kind": "panel",
+      "description": "Saved movable chat with editable title, independent composer/context/mode, minimize and close. Layout is constrained to the viewport and persists by vault.",
+      "html": "<section class=\"ds-chat\"><header>Launch notes <span>— ×</span></header><small>Claude · Chat · Context</small><p>A conversation in your orbit.</p><textarea aria-label=\"Continue this conversation\" placeholder=\"Continue this conversation…\"></textarea></section>",
+      "css": ".ds-chat{width:min(400px,100%);height:320px;display:flex;flex-direction:column;color:#ddd;background:#101010ad;backdrop-filter:blur(28px) saturate(0);border:1px solid #ffffff35;border-radius:14px;overflow:hidden;font:12px Manrope,sans-serif}.ds-chat header{padding:14px;border-bottom:1px solid #ffffff18}.ds-chat header span{float:right}.ds-chat small{padding:10px 14px;border-bottom:1px solid #ffffff12;color:#aaa}.ds-chat p{flex:1;padding:14px}.ds-chat textarea{margin:10px 14px;padding:10px;background:#08080840;border:0;color:#ddd}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Living Vault Observatory",
+    "overview": "Aphelion is a black observatory inhabited by the user's supplied Neuron particle form. Curling silver filaments, dendrite branches, and bright tip beads occupy the viewport; pale serif typography and thin neutral glass give the user a quiet place to act within it. The supplied Neuron generator and the explicit black-and-white correction are the authority for the particle form and palette. [The earlier reference image](docs/design/aphelion-reference-v1.png) remains a reference for the floating composition only: environment first, composer second, then peripheral agent and vault controls, then navigation.\n\nThe world is spacious at rest and becomes denser only when the user opens a working surface, response, inspector, or dialog. Glass remains visibly permeable to the environment. The sculpture is a vault metaphor; particles do not claim a one-to-one mapping to notes. Connection indicators, selected vaults, projects, and agent states must come from the actual runtime.\n\nIndependent saved chat and image windows float above the vault. Knowledge uses a searchable library/editor surface. The brand is text only; the dot grid is removed.",
+    "keyCharacteristics": [
+      "A continuous, full-viewport Neuron field with curling filaments, dendrite branches, tip beads, and open black space.",
+      "Low-opacity peripheral glass with a slightly frostier command composer.",
+      "Pale Cormorant Garamond paired with restrained Manrope utility and reading text.",
+      "Slow procedural motion, exact spring heading entrances, and an additive fine-pointer ghost cursor trail.",
+      "Quiet working controls with real state and explicit context attachment."
+    ],
+    "rules": [
+      {
+        "name": "The Monochrome Field Rule",
+        "body": "Keep Neuron, dust, provider marks, connection indicators, glass, and focus treatments neutral. Preserve the supplied generator's branching form.",
+        "section": "colors"
+      },
+      {
+        "name": "The Honest Signal Rule",
+        "body": "A status dot or label reports observed runtime state; a decorative particle never implies a real note or connection.",
+        "section": "colors"
+      },
+      {
+        "name": "The Heading Motion Rule",
+        "body": "Semantic headings use the shared Heading component and spring-text-engine pinned to (0.1.5), with its @react-spring/web peer. The entrance runs once: opacity (0 → 1), scale (1.4 → 1), blur (6px → 0px), tension (200), friction (24), and word stagger (55ms). Reduced motion renders ordinary visible headings. Body copy stays static. Center the engine's flex container only for centered headings; retain left alignment elsewhere.",
+        "section": "typography"
+      },
+      {
+        "name": "The Continuous Environment Rule",
+        "body": "Keep the overview's environment full bleed. Do not wrap it in a visualization card, bordered hero, opaque sidebar, statistics strip, or dashboard card grid.",
+        "section": "layout"
+      },
+      {
+        "name": "The Thin Material Rule",
+        "body": "Preserve visible scene continuity through glass. Resolve readability through local tint and brightness control, not opaque panels or decorative glow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep the luminous vault environment dominant, continuous, and visible through peripheral glass.",
+      "**Do** preserve the reference's open space, edge-aligned controls, and broad shallow composer.",
+      "**Do** use actual runtime state and real vault/project actions for every visible control.",
+      "**Do** keep note attachment deliberate and show the selected context before sending.",
+      "**Do** use the exact shared heading entrance, native cursor, visible keyboard focus, and reduced-motion fallbacks.",
+      "**Do** preserve the supplied Neuron generator, its seed, source camera, and neutral palette.",
+      "**Do** load styles in the existing order: legacy scaffold, observatory styling, immersive layout, then monochrome overrides."
+    ],
+    "donts": [
+      "**Don't** enclose the overview environment in a card, hero panel, opaque sidebar, card grid, or statistics strip.",
+      "**Don't** add a giant marketing headline, heavy neon, thick outlines, or ornamental panel glow.",
+      "**Don't** replace the live WebGL environment with the reference image as a flattened background.",
+      "**Don't** restore the rejected ribbon atmosphere or use the earlier image to override the supplied Neuron form and black-and-white palette.",
+      "**Don't** describe decorative particles as individually mapped notes.",
+      "**Don't** fabricate connection labels or treat a ChatGPT website session as the OpenAI API connection.",
+      "**Don't** replace the supplied heading spring with CSS keyframes, CSS transitions, or a different animation library.",
+      "**Don't** hide or replace the native cursor, intercept input with effects, or run pointer decoration on touch/coarse devices."
+    ]
+  }
+}

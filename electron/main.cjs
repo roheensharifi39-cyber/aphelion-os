@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, safeStorage } = require('electron');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 if (process.env.APHELION_TEST_HOME) app.setPath('userData', path.resolve(process.env.APHELION_TEST_HOME));
@@ -12,9 +12,9 @@ function validSender(event) {
 }
 app.whenReady().then(async () => {
   const { createRuntime } = await import('./runtime.mjs');
-  runtime = await createRuntime({ dataDirectory: app.getPath('userData'), desktop: true, openExternal: url => shell.openExternal(url), getNetwork: () => ({ online: true, clients: window && !window.isDestroyed() ? 1 : 0, sent, received }), selectFolder: async () => { const result = await dialog.showOpenDialog(window, { title: 'Choose project or Obsidian vault folder', properties: ['openDirectory'] }); return result.canceled ? null : result.filePaths[0]; } });
+  runtime = await createRuntime({ dataDirectory: app.getPath('userData'), desktop: true, openaiSecureStorage: safeStorage, openExternal: url => shell.openExternal(url), getNetwork: () => ({ online: true, clients: window && !window.isDestroyed() ? 1 : 0, sent, received }), selectFolder: async () => { const result = await dialog.showOpenDialog(window, { title: 'Choose project or Obsidian vault folder', properties: ['openDirectory'] }); return result.canceled ? null : result.filePaths[0]; } });
   Menu.setApplicationMenu(null);
-  window = new BrowserWindow({ width: 1660, height: 1050, minWidth: 1000, minHeight: 700, frame: false, backgroundColor: '#060f15', title: 'Aphelion OS', show: false, webPreferences: { preload: path.join(__dirname, 'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true } });
+  window = new BrowserWindow({ width: 1660, height: 1050, minWidth: 1000, minHeight: 700, frame: true, backgroundColor: '#060f15', title: 'Aphelion OS', show: false, webPreferences: { preload: path.join(__dirname, 'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true } });
   window.once('ready-to-show', () => window.show());
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   window.webContents.on('will-navigate', (event, url) => { if (url !== indexURL && url !== devURL && url !== devURL + '/') event.preventDefault(); });

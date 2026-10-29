@@ -1,0 +1,52 @@
+/* Neuron: silver filaments, luminous white synapses, clear black space. */
+.scene-os {
+  --bg: #050505;
+  --surface: #151515;
+  --text: #ededed;
+  --muted: #aaa;
+  --silver: #ccc;
+  --green: #ddd;
+  --peach: #ddd;
+  --blue: #eee;
+  --gold: #ddd;
+  background: #000;
+}
+.scene-os .immersive-field::after { background: linear-gradient(180deg, #0006, transparent 15%, transparent 78%, #0002); }
+.scene-os .aphelion-brand > span, .scene-os .observatory-nav button, .scene-os .observatory-nav button.active,
+.scene-os .intelligence-heading h2, .scene-os .provider-row > strong, .scene-os .vault-identity h1,
+.scene-os .vault-identity strong, .scene-os .living-prompt, .scene-os .living-prompt::placeholder { color: #f1f1f1; }
+.scene-os .observatory-nav button.active::after { background: linear-gradient(90deg, transparent, #fff, transparent); }
+.scene-os .observatory-nav button.active::before { background: #fff; box-shadow: 0 2px 9px #ffffff66; }
+.scene-os .floating-glass { background: linear-gradient(125deg, #ffffff0d, #0a0a0a38); border-color: #ffffff38; backdrop-filter: blur(15px) saturate(0); box-shadow: 0 12px 36px #0004, inset 0 1px 0 #ffffff09; }
+.scene-os .command-composer { background: linear-gradient(125deg, #ffffff12, #10101033 60%, #08080833); border-color: #ffffff50; backdrop-filter: blur(22px) saturate(0); }
+.scene-os .workspace-switchers > button { color: #eee; border-color: #ffffff36; background: #08080826; backdrop-filter: blur(14px) saturate(0); }
+.scene-os .workspace-switchers > button:hover { background: #ffffff12; border-color: #ffffff65; }
+.scene-os .provider-symbol.claude, .scene-os .provider-symbol.codex, .scene-os .provider-symbol.chatgpt,
+.scene-os .connection-label, .scene-os .external-label, .scene-os .vault-live-state, .scene-os .workspace-switchers .chevron,
+.scene-os .composer-options select, .scene-os .composer-tools > button, .scene-os .preferences-trigger { color: #ddd; }
+.scene-os .connection-label i, .scene-os .connection-label.connected i, .scene-os .vault-live-state i.online { background: #eee; }
+.scene-os .connection-label:not(.connected) i { background: #777; }
+.scene-os .vault-crystal { filter: grayscale(1); }
+.scene-os .composer-tools .pixel-icon { color: #ddd; }
+.scene-os .field-controls { border-color: #ffffff24; background: #09090938; }
+.scene-os .field-controls button { color: #ccc; }
+.scene-os .send-command { color: #fff; border-color: #ffffff80; background: #ffffff13; }
+.scene-os .send-command:hover:enabled { background: #ffffff30; }
+.scene-os .send-command.stop { color: #fff; border-color: #ffffffb3; background: #ffffff20; }
+.scene-os .mc-button { color: #e0e0e0; background: #252525; border-color: #ffffff28; }
+.scene-os .mc-button.green { color: #111; background: #ddd; border-color: transparent; }
+.scene-os .mc-button.ghost { background: transparent; border-color: transparent; }
+.scene-os .mc-button.green:hover:not(:disabled), .scene-os .mc-button:hover:not(:disabled), .scene-os .mc-button:active:not(:disabled) { color: #fff; background: #444; border-color: #ffffff4d; }
+.scene-os .badge { color: #ddd; background: #252525; border-color: #ffffff24; }
+.scene-os .composer-context p, .scene-os .composer-context label, .scene-os .popover-title > button,
+.scene-os .home-response button, .scene-os .home-response > p { color: #ddd; }
+.scene-os .composer-options { border-color: #ffffff28; }
+.scene-os .glass-popover, .scene-os .home-response, .scene-os .focus-screen, .scene-os .page-content,
+.scene-os .module-dialog { background: #101010c9; border-color: #ffffff35; backdrop-filter: blur(25px) saturate(0); }
+.scene-os .focus-screen .panel, .scene-os .focus-screen .reference-panel, .scene-os .page-content .panel { background: #0c0c0c80; border-color: #ffffff26; }
+.scene-os .composer-options select option { background: #161616; color: #eee; }
+.scene-os input, .scene-os select, .scene-os textarea:not(.living-prompt) { color: #eee; background-color: #101010; border-color: #ffffff28; }
+.scene-os .composer-options select { background-color: transparent; }
+.scene-os :is(button,a,input,textarea,select,summary):focus-visible { outline-color: #fff; }
+.scene-os input, .scene-os textarea { caret-color: #fff; accent-color: #ccc; }
+.scene-os ::selection { background: #ffffff35; color: #fff; }

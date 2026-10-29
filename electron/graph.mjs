@@ -1,10 +1,12 @@
 import { listNotes, readNote } from './vault.mjs';
 import { graphFromNotes } from './graph-data.mjs';
 export async function buildVaultGraph(root) {
-  const metadata = await listNotes(root);
-  const notes = [];
+  const metadata = (await listNotes(root)).sort((a, b) => b.modified.localeCompare(a.modified) || a.path.localeCompare(b.path));
+  const notes = new Map();
   for (const note of metadata.slice(0, 32)) {
-    try { notes.push(await readNote(root, note.path)); } catch { /* Files removed or changed during indexing are excluded. */ }
+    try { notes.set(note.path, await readNote(root, note.path)); } catch { /* A changing note can still be listed without a stale excerpt. */ }
   }
-  return graphFromNotes(notes, metadata.length);
+  // Keep every listed note selectable while bounding content reads to recent memories.
+  const graph = graphFromNotes(metadata.map(note => notes.get(note.path) || { ...note, content: '' }), metadata.length);
+  return { ...graph, truncated: notes.size < metadata.length };
 }

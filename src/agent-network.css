@@ -1,0 +1,92 @@
+/* Agent signals sit over the original, continuously rendered particle field. */
+.agent-network { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.agent-network[hidden] { display: none; }
+.agent-connections { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.agent-connections path { fill: none; stroke: #eeeeee; stroke-width: 1; stroke-opacity: .55; stroke-dasharray: 4 8; }
+.agent-connections path.is-output { stroke-dasharray: none; stroke-opacity: .75; }
+.agent-connections path.is-working { animation: agent-context-flow 2.4s linear infinite; }
+@keyframes agent-context-flow { to { stroke-dashoffset: 48; } }
+.scene-os .membrane-agent { position: absolute; top: 28%; left: 23%; display: flex; align-items: center; gap: 10px; max-width: 205px; min-height: 56px; padding: 10px 14px; text-align: left; color: #ededed; border: 1px solid #ffffff35; border-radius: 12px; background: #101010c9; backdrop-filter: blur(15px); pointer-events: auto; }
+.scene-os .membrane-agent.codex { left: auto; right: 24%; top: 39%; }
+.scene-os .membrane-agent:hover, .scene-os .membrane-agent[aria-expanded=true] { border-color: #ffffff85; background: #191919e8; }
+.membrane-agent strong { display: block; font: 400 20px/1.1 var(--display); }
+.membrane-agent small { display: block; margin-top: 4px; font: 11px/1.5 var(--body); color: #c2c2c2; }
+.agent-orbit-mark { display: grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; border: 1px solid #ffffff45; border-radius: 50%; }
+.membrane-agent[data-state=working] .agent-orbit-mark { animation: agent-working 2s ease-in-out infinite; }
+.membrane-agent[data-state=queued] .agent-orbit-mark { border-style: dashed; }
+.membrane-agent[data-state=offline] .agent-orbit-mark { color: #aaa; border-color: #ffffff25; }
+.membrane-agent[data-state=error] .agent-orbit-mark { border-style: double; border-width: 3px; }
+@keyframes agent-working { 50% { border-color: #fff; transform: scale(1.13); } }
+.membrane-legend { position: absolute; bottom: 80px; left: 28px; width: 218px; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; background: #080808b8; color: #ccc; font: 10px/1.6 var(--body); }
+.membrane-legend > span { margin: 0 5px; }
+.membrane-legend small { display: block; font-size: 9px; color: #aaa; }
+.scene-os .agent-activity-detail { position: absolute; top: 23%; left: 26%; width: min(400px, calc(100vw - 32px)); max-height: 48vh; overflow: auto; padding: 18px; background: #101010eb; backdrop-filter: blur(20px); border: 1px solid #ffffff40; border-radius: 14px; color: #ededed; font: 13px/1.65 var(--body); pointer-events: auto; }
+.agent-activity-detail > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.agent-activity-detail > div > button { display: grid; place-items: center; min-width: 44px; min-height: 44px; }
+.agent-activity-detail p { overflow-wrap: anywhere; }
+.agent-activity-detail ul { padding-left: 18px; }
+.agent-activity-detail li > button { min-height: 44px; text-align: left; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.agent-context-caption, .agent-activity-detail > small { display: block; color: #bbb; font-size: 11px; }
+.scene-os .agent-detail-action { display: block; min-height: 44px; margin: 8px 0; padding: 8px 12px; border: 1px solid #ffffff35; border-radius: 6px; background: #ffffff0d; color: #eee; }
+.agent-network[data-paused=true] :is(path, .agent-orbit-mark) { animation-play-state: paused; }
+
+/* The inherited wrapping column sent note rows off the right of the popover. */
+.scene-os .living-command-center .composer-context { flex-wrap: nowrap; overflow: hidden; background: #101010e8; }
+.scene-os .living-command-center .composer-context > :not(.overview-context-list) { flex-shrink: 0; }
+.scene-os .living-command-center .overview-context-list { flex: 1 1 auto; width: 100%; min-width: 0; overflow-x: hidden; }
+.scene-os .living-command-center .overview-context-list > label { display: flex; flex-wrap: nowrap; width: 100%; min-width: 0; box-sizing: border-box; }
+.scene-os .living-command-center .overview-context-list input[type=checkbox] { width: 18px; height: 18px; min-height: 18px; flex: 0 0 18px; accent-color: #ddd; }
+.scene-os .living-command-center .overview-context-list label > span { flex: 1; font-size: 14px; }
+.scene-os .living-command-center .overview-context-list small { font-size: 12px; }
+.scene-os .living-command-center .overview-context-count { color: #ccc; font-size: 12px; }
+
+/* Local reading tint preserves the field's brightness and motion outside windows. */
+.scene-os .overview-inspector.vault-module { bottom: 72px; background: #101010d9; }
+.scene-os.scene-route-vault .home-module :is(.command-composer, .overview-tools, .home-response) { display: none; }
+.scene-os .memory-inspector { background: #101010d9; }
+.scene-os .knowledge-hub .knowledge-file-view { overflow: hidden; }
+.scene-os .knowledge-hub .knowledge-page { min-height: 0; }
+.scene-os .knowledge-hub .graph-note text { opacity: 0; }
+.scene-os .knowledge-hub .graph-note:is(:hover, :focus-visible, .selected) text { opacity: 1; font-size: 13px; }
+.scene-os .knowledge-hub .knowledge-section-label, .scene-os .knowledge-hub .graph-legend { font-size: 12px; }
+.scene-os .vault-module .knowledge-hub .knowledge-page .note-list strong { font-size: 14px; }
+.scene-os .vault-module .knowledge-hub .knowledge-page .note-list small { font-size: 11px; }
+.scene-os .vault-module .knowledge-hub .knowledge-page .note-toolbar strong { font-size: 14px; }
+.scene-os .command-dialog { background: #111111f2; color: #eee; border: 1px solid #ffffff40; border-radius: 14px; box-shadow: 0 20px 60px #0009; }
+.scene-os .command-dialog .palette-search { background: transparent; border-color: #ffffff30; }
+.scene-os .command-dialog .palette-results button.selected { background: #ffffff14; border-color: #ffffff40; }
+.scene-os .command-dialog .palette-results button { color: #eee; }
+.scene-os .command-dialog :is(kbd, .palette-footer, .palette-results button span) { color: #bbb; }
+.scene-os .field-controls button, .scene-os .intelligence-heading > button { min-width: 44px; min-height: 44px; }
+.scene-os .vault-note-anchor { width: 44px; height: 44px; margin: -22px; }
+
+@media (max-width: 700px) {
+  .membrane-legend { top: 212px; bottom: auto; left: 16px; right: 16px; width: auto; font-size: 10px; padding: 4px 8px; }
+  .membrane-legend small { font-size: 9px; }
+  .scene-os .membrane-agent, .scene-os .membrane-agent.codex { top: 280px; left: 16px; right: auto; min-height: 50px; padding: 8px 10px; max-width: calc(50vw - 24px); gap: 7px; }
+  .scene-os .membrane-agent.codex { left: auto; right: 16px; }
+  .membrane-agent strong { font-size: 18px; }
+  .membrane-agent small { font-size: 10px; }
+  .agent-orbit-mark { width: 24px; height: 24px; }
+  .scene-os .agent-activity-detail { left: 16px; top: 230px; max-height: calc(100dvh - 435px); }
+  .scene-os .overview-inspector.vault-module { top: 145px; bottom: 16px; }
+  .scene-os .vault-module .knowledge-hub .knowledge-page { min-height: 0; }
+  .scene-os .vault-module .knowledge-hub .knowledge-page .note-editor { min-height: 0; }
+  .scene-os .vault-module .knowledge-hub .knowledge-page .note-content { font-size: 16px; }
+  .scene-os .knowledge-hub .knowledge-search > input { font-size: 16px; }
+  .scene-os .knowledge-hub .knowledge-button, .scene-os .knowledge-hub .knowledge-icon-button, .scene-os .knowledge-tabs > button { min-height: 44px; }
+  .scene-os .field-controls { bottom: 8px; }
+  .scene-os .living-command-center .overview-tools { bottom: 8px; }
+  .scene-os .send-command { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+  .scene-os .preferences-trigger { min-width: 44px; min-height: 44px; }
+  .scene-os .observatory-nav button { min-height: 44px; }
+}
+@media (max-height: 600px) and (min-width: 701px) {
+  .membrane-legend { top: 70px; bottom: auto; left: 28%; width: auto; }
+  .scene-os .membrane-agent, .scene-os .membrane-agent.codex { top: 135px; }
+  .scene-os .agent-activity-detail { top: 100px; max-height: calc(100dvh - 230px); }
+  .scene-os .overview-inspector.vault-module { top: 70px; bottom: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .agent-network :is(path, .agent-orbit-mark) { animation: none; }
+}

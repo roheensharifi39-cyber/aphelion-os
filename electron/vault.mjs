@@ -31,6 +31,18 @@ async function safePath(root, path, creating = false) {
   }
   return target;
 }
+export async function ensureVaultDirectory(root, folder) {
+  checkPath(`${folder}/placeholder.md`);
+  const base = await realpath(root);
+  let current = base;
+  for (const part of folder.split('/')) {
+    current = resolve(current, part); inside(base, current);
+    try { await mkdir(current); } catch (error) { if (error.code !== 'EEXIST') throw error; }
+    const info = await lstat(current);
+    if (!info.isDirectory() || info.isSymbolicLink()) throw new Error('Conversation memory needs an ordinary folder inside your vault.');
+    inside(base, await realpath(current));
+  }
+}
 function metadata(path, content, stat) {
   return { path, title: path.split('/').pop().slice(0, -3), modified: stat.mtime.toISOString(), revision: hash(content), content };
 }

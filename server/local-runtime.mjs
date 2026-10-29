@@ -5,7 +5,7 @@ export function localRuntimePlugin({ runtimeFactory = createRuntime } = {}) {
   return {
     name: 'aphelion-local-engine',
     async configureServer(server) {
-      const sessions = new Set(), clients = new Set();
+      const sessions = new Set(), clients = new Set(), signInTickets = new Map();
       const counters = { online: true, clients: 0, received: 0, sent: 0 };
       const cookieName = 'aphelion-local-session';
       const runtime = await runtimeFactory({ desktop: false, getNetwork: () => ({ ...counters, clients: clients.size }) });
@@ -18,7 +18,8 @@ export function localRuntimePlugin({ runtimeFactory = createRuntime } = {}) {
         if (req.headers.origin && req.headers.origin !== `http://${req.headers.host}`) return false;
         return !req.headers['sec-fetch-site'] || ['same-origin', 'none'].includes(req.headers['sec-fetch-site']);
       }
-      function authorized(req) { const match = new RegExp(`(?:^|;\\s*)${cookieName}=([a-f0-9]+)`).exec(req.headers.cookie || ''); return match && sessions.has(match[1]); }
+      function clientSession(req) { return new RegExp(`(?:^|;\\s*)${cookieName}=([a-f0-9]+)`).exec(req.headers.cookie || '')?.[1]; }
+      function authorized(req) { return sessions.has(clientSession(req)); }
       function json(res, status, data) { const body = JSON.stringify(data); counters.sent += Buffer.byteLength(body); res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(body); }
       server.middlewares.use('/__aphelion', async (req, res) => {
         try {
@@ -31,6 +32,13 @@ export function localRuntimePlugin({ runtimeFactory = createRuntime } = {}) {
             json(res, 200, { ok: true, live: true }); return;
           }
           if (!authorized(req)) { json(res, 401, { ok: false, error: 'Reconnect to the local engine.' }); return; }
+          if (path === '/chatgpt-signin' && req.method === 'GET') {
+            const ticket = new URL(req.url, `http://${req.headers.host}`).searchParams.get('ticket');
+            const entry = signInTickets.get(ticket);
+            if (!entry || entry.expiresAt <= Date.now() || entry.session !== clientSession(req)) { res.writeHead(410, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' }); res.end('This sign-in link expired. Return to Aphelion and try again.'); return; }
+            signInTickets.delete(ticket);
+            res.writeHead(302, { Location: entry.url, 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' }); res.end(); return;
+          }
           if (path === '/events' && req.method === 'GET') {
             res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive' });
             res.write(': local-engine-connected\n\n'); clients.add(res); req.on('close', () => clients.delete(res));
@@ -41,10 +49,21 @@ export function localRuntimePlugin({ runtimeFactory = createRuntime } = {}) {
           for await (const chunk of req) { size += chunk.length; counters.received += chunk.length; if (size > 2000000) throw new Error('This request is too large.'); chunks.push(chunk); }
           const request = JSON.parse(Buffer.concat(chunks).toString('utf8'));
           if (typeof request.method !== 'string' || !Array.isArray(request.args) || request.args.length > 4) throw new Error('Invalid local engine request.');
-          const result = await runtime.invoke(request.method, request.args); json(res, 200, { ok: true, result });
+          let result = await runtime.invoke(request.method, request.args);
+          if (request.method === 'startChatGPTLogin') {
+            const authorization = new URL(result.authorizationUrl);
+            if (authorization.origin !== 'https://auth.openai.com' || authorization.pathname !== '/api/accounts/authorize') throw new Error('The sign-in address could not be verified.');
+            if (!Number.isFinite(result.expiresAt) || result.expiresAt <= Date.now()) throw new Error('The sign-in link expired. Try again.');
+            for (const [ticket, entry] of signInTickets) if (entry.expiresAt <= Date.now()) signInTickets.delete(ticket);
+            if (signInTickets.size >= 10) signInTickets.clear();
+            const ticket = randomBytes(24).toString('hex');
+            signInTickets.set(ticket, { url: authorization.href, session: clientSession(req), expiresAt: Math.min(result.expiresAt, Date.now() + 60000) });
+            result = { authorizationUrl: `http://${req.headers.host}/__aphelion/chatgpt-signin?ticket=${ticket}`, expiresAt: result.expiresAt };
+          }
+          json(res, 200, { ok: true, result });
         } catch (error) { if (!res.headersSent) json(res, 400, { ok: false, error: error.message }); else res.end(); }
       });
-      server.httpServer?.once('close', () => { counters.online = false; offEvent(); offDelta(); runtime.dispose(); for (const client of clients) client.end(); clients.clear(); });
+      server.httpServer?.once('close', () => { counters.online = false; offEvent(); offDelta(); runtime.dispose(); signInTickets.clear(); for (const client of clients) client.end(); clients.clear(); });
     },
   };
 }

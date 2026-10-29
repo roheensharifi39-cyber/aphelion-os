@@ -24,13 +24,20 @@ async function stream() {
 }
 async function rpc<T>(method: string, ...args: unknown[]): Promise<T> {
   await bootstrap();
-  if (method === 'chat' || method === 'mission') await stream();
+  if (['chat','mission','openaiChat'].includes(method)) await stream();
   const invoke = () => fetch('/__aphelion/rpc', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ method, args }) });
   let response = await invoke();
-  if (response.status === 401) { boot = null; source?.close(); source = null; connection = null; await bootstrap(); if (method === 'chat' || method === 'mission') await stream(); response = await invoke(); }
+  if (response.status === 401) { boot = null; source?.close(); source = null; connection = null; await bootstrap(); if (['chat','mission','openaiChat'].includes(method)) await stream(); response = await invoke(); }
   const data = await response.json(); if (!response.ok || !data.ok) throw new Error(data.error || 'The local engine action failed.'); return data.result as T;
 }
 const browserBridge: AphelionBridge = {
+  async startChatGPTLogin() {
+    const popup = window.open('about:blank', '_blank');
+    try { const result = await rpc<{authorizationUrl: string; expiresAt: number}>('startChatGPTLogin'); const url = new URL(result.authorizationUrl); if (url.origin !== window.location.origin || url.pathname !== '/__aphelion/chatgpt-signin' || !/^[a-f0-9]{48}$/.test(url.searchParams.get('ticket') || '')) throw new Error('The sign-in address could not be verified.'); if (popup) { popup.opener = null; popup.location.href = url.href; } return { ...result, authorizationUrl: popup ? '' : result.authorizationUrl }; }
+    catch (error) { popup?.close(); throw error; }
+  },
+  cancelChatGPTLogin: () => rpc('cancelChatGPTLogin'), disconnectChatGPT: () => rpc('disconnectChatGPT'), chatGPTModels: () => rpc('chatGPTModels'),
+  openaiStatus: () => rpc('openaiStatus'), configureOpenAI: input => rpc('configureOpenAI', input), openaiChat: request => rpc('openaiChat', request), generateImage: request => rpc('generateImage', request),
   status: () => rpc('status'), modelCatalog: () => rpc('modelCatalog'), configure: input => rpc('configure', input), login: agent => rpc('login', agent),
   runtime: () => rpc('runtime'), mission: request => rpc('mission', request),
   onRuntimeEvent: handler => { runtimeHandlers.add(handler); void stream().catch(() => {}); return () => runtimeHandlers.delete(handler); },

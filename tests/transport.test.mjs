@@ -5,11 +5,11 @@ import { localRuntimePlugin } from '../server/local-runtime.mjs';
 const cleanups = [];
 afterEach(async () => { for (const close of cleanups.splice(0)) await close(); });
 
-async function engine() {
+async function engine(handlers = {}) {
   let middleware, invocation = [], eventListener, deltaListener, disposed = false;
   const runtime = {
     methods: { runtime: async () => ({ heartbeat: 1, activeJobs: 0 }) },
-    invoke: async (method, args) => { invocation.push({ method, args }); if (method !== 'project') throw new Error('This local engine action is unavailable.'); return { name: 'Real project' }; },
+    invoke: async (method, args) => { invocation.push({ method, args }); if (Object.hasOwn(handlers,method)) return handlers[method](...args); if (method !== 'project') throw new Error('This local engine action is unavailable.'); return { name: 'Real project' }; },
     onEvent: fn => { eventListener = fn; return () => { eventListener = null; }; },
     onDelta: fn => { deltaListener = fn; return () => { deltaListener = null; }; },
     dispose: () => { disposed = true; },
@@ -44,6 +44,27 @@ function rpc(app, cookie, body, headers = {}) {
 }
 
 describe('live local transport', () => {
+  it('relays sign-in through a one-use local ticket without returning OAuth hints to the renderer', async () => {
+    const official = 'https://auth.openai.com/api/accounts/authorize?client_id=oaiapp_fixture&state=private-state&id_token_hint=private-id-token';
+    const app = await engine({startChatGPTLogin: async () => ({authorizationUrl:official,expiresAt:Date.now()+300000})});
+    const cookie = await bootstrap(app), otherCookie = await bootstrap(app);
+    const response = await rpc(app,cookie,{method:'startChatGPTLogin',args:[]});
+    const body = await response.json();
+    const local = body.result.authorizationUrl;
+    expect(local).toMatch(new RegExp(`^http://127\\.0\\.0\\.1:${app.port}/__aphelion/chatgpt-signin\\?ticket=[a-f0-9]{48}$`));
+    expect(JSON.stringify(body)).not.toMatch(/private-state|private-id-token|auth\.openai\.com/);
+    expect((await fetch(local,{redirect:'manual'})).status).toBe(401);
+    expect((await fetch(local,{headers:{cookie:otherCookie},redirect:'manual'})).status).toBe(410);
+    const redirect = await fetch(local,{headers:{cookie},redirect:'manual'});
+    expect(redirect.status).toBe(302); expect(redirect.headers.get('location')).toBe(official);
+    expect(redirect.headers.get('referrer-policy')).toBe('no-referrer');
+    expect((await fetch(local,{headers:{cookie},redirect:'manual'})).status).toBe(410);
+  });
+  it('rejects an untrusted sign-in destination instead of handing it to the browser', async () => {
+    const app = await engine({startChatGPTLogin: async () => ({authorizationUrl:'https://untrusted.example/steal',expiresAt:Date.now()+300000})});
+    const cookie = await bootstrap(app), response = await rpc(app,cookie,{method:'startChatGPTLogin',args:[]});
+    expect(response.status).toBe(400); expect((await response.json()).error).toMatch(/could not be verified/);
+  });
   it('requires the ephemeral session before any action and rejects cross-origin requests', async () => {
     const app = await engine();
     expect((await rpc(app, '', { method: 'project', args: [] })).status).toBe(401);

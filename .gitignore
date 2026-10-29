@@ -9,3 +9,8 @@ playwright-report/
 !.env.example
 *.log
 *.local
+
+# Local editor state and temporary design review output
+.obsidian/
+.impeccable/review/
+.impeccable/hook.cache.json

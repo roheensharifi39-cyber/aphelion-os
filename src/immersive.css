@@ -1,0 +1,130 @@
+/* Reference composition: a continuous vault environment with peripheral glass. */
+body:has(.scene-os) { overflow: hidden; }
+.scene-os { position: relative; height: 100dvh; min-height: 560px; overflow: hidden; background: #020508; }
+.scene-os .immersive-field { position: fixed; inset: 0; width: 100%; height: 100dvh; z-index: 0; }
+.scene-os .immersive-field canvas { display: block; width: 100%; height: 100%; }
+.scene-os .immersive-field::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, #0009, transparent 16%, transparent 76%, #0003), radial-gradient(ellipse at 80% 8%, #0006, transparent 40%); }
+.scene-os .field-error { inset: 40% 25% auto; z-index: 2; font: 14px/1.7 var(--body); padding: 20px; background: #07111caa; border-radius: 12px; }
+.scene-os .field-controls { z-index: 3; left: 28px; bottom: 24px; right: auto; top: auto; border-color: #d8efff24; background: #09121d38; backdrop-filter: blur(10px); }
+.scene-os .field-controls button { font: 11px var(--body); min-width: 30px; min-height: 30px; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.scene-os .field-controls button:last-child { padding-left: 12px; padding-right: 12px; }
+.scene-os .observatory-header { position: relative; z-index: 10; height: 86px; padding: 0 28px; gap: 35px; border: 0; background: transparent; flex-wrap: nowrap; }
+.scene-os .aphelion-brand { gap: 12px; filter: drop-shadow(0 2px 5px #000b); }
+.scene-os .aphelion-brand > svg { width: 41px; height: 41px; stroke-width: .9; }
+.scene-os .aphelion-brand > svg circle:last-child { fill: none; stroke: #e0e5e7; stroke-width: .9; }
+.scene-os .aphelion-brand > span { font-size: 29px; color: #f0eade; letter-spacing: -.025em; white-space: nowrap; }
+.scene-os .observatory-nav { justify-content: flex-start; flex: 1; gap: 26px; margin: 0; height: 100%; }
+.scene-os .observatory-nav button { font-family: var(--display); font-size: 16px; color: #d5d5d0; padding: 0 4px; text-shadow: 0 1px 10px #000; }
+.scene-os .observatory-nav button.active { color: #fff9e8; }
+.scene-os .observatory-nav button.active::after { left: 0; right: 0; bottom: 24px; background: linear-gradient(90deg, transparent, #d7edfa, transparent); }
+.scene-os .observatory-nav button.active::before { content: ''; position: absolute; left: calc(50% - 2px); bottom: 22px; width: 4px; height: 4px; border-radius: 50%; background: #e2f6ff; box-shadow: 0 2px 9px #c0e5fb; }
+.scene-os .workspace-switchers { width: auto; gap: 22px; flex-shrink: 0; }
+.scene-os .workspace-switchers > button { min-width: 165px; max-width: 220px; min-height: 40px; justify-content: flex-start; border: 1px solid #d5e4f538; border-radius: 12px; background: #0b141c26; backdrop-filter: blur(14px); color: #ece6dc; font: 15px var(--display); padding: 9px 14px; gap: 12px; }
+.scene-os .workspace-switchers > button:hover { background: #a0b8cf16; border-color: #d5e4f564; }
+.scene-os .workspace-switchers .chevron { margin-left: auto; padding-left: 10px; font: 15px var(--body); color: #c5d3da; }
+.scene-menu { display: grid; place-items: center; background: #09121a28; border: 0; color: #c4d1dc; width: 30px; height: 35px; padding: 0; margin-left: -18px; }
+.scene-os .main-shell { position: relative; z-index: 2; height: calc(100dvh - 86px); overflow: auto; padding: 10px 0 30px; }
+.scene-os.scene-route-home .main-shell { position: absolute; inset: 0; height: 100%; padding: 0; pointer-events: none; overflow: hidden; }
+.scene-os .observatory-stage.front-screen, .scene-os .observatory-stage.front-screen .observatory-deck, .scene-os .home-module, .living-command-center { height: 100%; }
+.living-command-center { position: relative; width: 100%; pointer-events: none; }
+.floating-glass { pointer-events: auto; background: linear-gradient(125deg, #8dabc91c, #0a141c30 65%); border: 1px solid #d4e5f340; border-radius: 15px; backdrop-filter: blur(15px) saturate(.9); box-shadow: 0 12px 36px #00000024, inset 0 1px 0 #e6f5ff0a; }
+.scene-os .intelligence-panel { position: absolute; right: 28px; top: 10vh; width: clamp(230px, 16.6vw, 285px); padding: 0; overflow: hidden; }
+.intelligence-heading { display: flex; align-items: center; padding: 15px 20px; min-height: 53px; border-bottom: 1px solid #d6e5f32a; gap: 10px; }
+.intelligence-heading h2 { font-size: 21px; flex: 1; color: #f2eadd; }
+.intelligence-heading > button { border: 0; background: none; padding: 0; font-size: 20px; line-height: 1; letter-spacing: 2px; color: #dce4e8; min-width: 25px; min-height: 25px; }
+.intelligence-heading > .intelligence-toggle { display: none; }
+.scene-os .provider-list { gap: 0; padding: 6px 19px 13px; }
+.scene-os .provider-row { padding: 11px 2px; min-height: 51px; gap: 12px; border: 0; border-radius: 5px; }
+.scene-os .provider-row:hover { background: #d4e5fa0a; }
+.scene-os .provider-row > strong { font: 16px var(--display); font-weight: 400; color: #f5f2e9; }
+.scene-os .provider-symbol { width: 29px; height: 29px; flex-basis: 29px; }
+.scene-os .provider-symbol svg { width: 27px; height: 27px; stroke-width: 1.4; }
+.scene-os .provider-symbol.claude { color: #d38158; }.scene-os .provider-symbol.codex { color: #e8edf3; }.scene-os .provider-symbol.chatgpt { color: #e1e9ed; }
+.scene-os .provider-symbol.chatgpt svg { stroke-width: .9; }
+.scene-os .provider-row.chosen > strong { color: #fff; }.scene-os .provider-row.chosen strong::after { content: none; }
+.scene-os .connection-label, .scene-os .external-label { font: 12px var(--display); color: #d3dcdf; margin-left: auto; }
+.scene-os .connection-label i { width: 7px; height: 7px; background: #a7b4bb; }.scene-os .connection-label.connected i { background: #74b5a0; }.scene-os .codex .connection-label.connected i { background: #59b3df; }
+.scene-os .external-label { gap: 5px; }
+.scene-os .vault-status-panel { position: absolute; left: 28px; bottom: 22vh; width: 218px; padding: 13px 17px; }
+.vault-identity { display: flex; align-items: center; gap: 15px; width: 100%; padding: 0; background: none; border: 0; text-align: left; }
+.vault-crystal { width: 28px; height: 42px; flex-shrink: 0; }
+.vault-identity > span { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.scene-os .vault-identity h1 { font-size: 14px; letter-spacing: 0; font-weight: 400; color: #e6e2da; }
+.vault-identity strong { font: 21px var(--display); color: #f4f0e6; }
+.vault-live-state { display: flex; align-items: center; gap: 8px; font: 13px var(--display); color: #d1d9dc; }
+.vault-live-state i { width: 7px; height: 7px; background: #9aabb8; border-radius: 50%; }.vault-live-state i.online { background: #76b79e; }
+.scene-os .workspace-footnote { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.scene-os .command-composer { position: absolute; left: 19.3%; right: 19.3%; bottom: 4.3vh; margin: 0; padding: 0; background: linear-gradient(125deg, #c5e0f522, #1b33452b 60%, #0b1b2b2b); border-color: #c6dfef66; border-radius: 19px; backdrop-filter: blur(22px) saturate(.85); }
+.scene-os .living-prompt { width: 100%; min-height: 76px; max-height: 25vh; resize: vertical; display: block; border: 0; border-radius: 19px 19px 0 0; padding: 22px 30px 13px; margin: 0; background: transparent; color: #f4efe4; font: italic 30px/1.35 var(--display); box-shadow: none; }
+.scene-os .living-prompt::placeholder { color: #eee8dc; opacity: 1; }
+.scene-os .living-prompt:focus-visible { outline-offset: -7px; }
+.scene-os .composer-options { margin: 0; padding: 8px 22px 10px 28px; min-height: 58px; border-top: 1px solid #dceeff32; align-items: center; gap: 15px; }
+.scene-os .composer-options > .composer-tools { display: flex; gap: 23px; align-items: center; min-width: 0; }
+.composer-agent, .composer-mode { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.scene-os .composer-agent > .provider-symbol { width: 20px; height: 20px; flex-basis: 20px; }.scene-os .composer-agent > .provider-symbol svg { width: 20px; height: 20px; }
+.scene-os .composer-options select { font: 14px var(--display); border: 0; background: transparent; color: #ece8df; padding: 7px 0; box-shadow: none; min-height: 30px; max-width: 110px; }
+.scene-os .composer-options select option { background: #101f2c; color: #e8eced; }
+.scene-os .composer-tools > button { display: flex; align-items: center; gap: 10px; min-height: 32px; font: 14px var(--display); color: #e6e6e1; }
+.select-chevron { margin-left: 4px; font-size: 12px; }
+.scene-os .composer-options > .composer-actions { margin-left: auto; display: flex; gap: 13px; }
+.scene-os .preferences-trigger { color: #d4e1e9; min-width: 26px; min-height: 32px; border: 0; background: none; padding: 0; display: grid; place-items: center; }
+.scene-os .send-command { border-radius: 50%; width: 42px; height: 42px; min-height: 42px; margin: 0; background: #d7e8f019; border: 1px solid #e9f6ff8c; color: #f5f7f6; display: grid; place-items: center; padding: 8px; }
+.scene-os .send-command > svg { width: 23px; height: 23px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.scene-os .send-command:disabled { opacity: .62; }.scene-os .send-command:hover:enabled { background: #c8e3f047; }.scene-os .send-command.stop { color: #f0b5a4; border-color: #e9b5a8; background: #41292444; }
+.glass-popover { position: absolute; bottom: calc(100% + 16px); left: 0; right: 0; background: #0c1a27d9; border: 1px solid #bcd6e34d; border-radius: 13px; backdrop-filter: blur(26px); padding: 20px; max-height: 45dvh; overflow: auto; box-shadow: 0 14px 40px #0005; }
+.scene-os .composer-context { display: flex; flex-direction: column; gap: 10px; padding: 22px; margin: 0; }
+.popover-title { display: flex; align-items: center; justify-content: space-between; gap: 15px; width: 100%; margin-bottom: 10px; }.popover-title h2 { font-size: 24px; }.popover-title > button { background: none; border: 0; padding: 4px; color: #d3e1eb; }
+.scene-os .composer-context p { width: auto; margin: 0 0 7px; font-size: 12px; color: #b9ccd9; }.scene-os .composer-context label { padding: 8px 0; font: 12px var(--body); display: flex; gap: 10px; color: #e0e8ed; }
+.scene-os .composer-preferences { margin: 0; }.scene-os .composer-preferences .agent-preferences { padding: 8px 0 0; max-width: none; }.scene-os .agent-preferences label > span { font-size: 10px; }
+.scene-os .home-response { position: absolute; top: 16vh; left: 22%; right: 22%; max-height: 57vh; padding: 25px; background: #0d1a27c9; backdrop-filter: blur(30px); overflow: auto; margin: 0; z-index: 3; }
+.scene-os .home-response .section-title { align-items: center; flex-wrap: wrap; margin-bottom: 18px; }.scene-os .home-response .section-title h2 { font-size: 28px; }.scene-os .home-response button { color: #d6e5ee; font-size: 11px; }.scene-os .home-response .markdown { max-height: none; overflow: visible; font-size: 14px; }.scene-os .home-response > p { color: #d4e2eb; font-size: 13px; }
+.scene-os .runtime-connection-error { position: absolute; top: 100px; left: 25%; right: 25%; padding: 18px; background: #201c24d9; pointer-events: auto; z-index: 4; font-size: 13px; }
+.scene-os .runtime-connection-error button { font-size: 12px; color: #d4e7f5; }
+/* Secondary tools are glass work surfaces over the same world. */
+.scene-os .focus-screen, .scene-os .page-content { background: #07131bc2; backdrop-filter: blur(25px); border: 1px solid #d2e4f333; border-radius: 16px; padding: 25px; margin: 8px 28px 25px; max-width: none; }
+.scene-os .vault-file-view .page-content { margin: 0; border: 0; backdrop-filter: none; background: none; }
+.scene-os .focus-screen .panel, .scene-os .focus-screen .reference-panel, .scene-os .page-content .panel { background: #0b1b2870; border-color: #c8dce82b; }
+.scene-os .mc-button.green:hover:not(:disabled), .scene-os .mc-button:hover:not(:disabled), .scene-os .mc-button:active:not(:disabled) { transform: none; box-shadow: none; background: #466176; color: #f0f5f8; border-color: #b7d0e04d; }
+.scene-os .module-dialog { background: #0a1823cd; backdrop-filter: blur(30px); border-color: #bfd5e34d; }.scene-os .module-dialog-heading { background: transparent; }.scene-os .module-empty-icon { background: transparent; border: 0; box-shadow: none; }.scene-os .module-dialog h2 { text-transform: none; }.scene-os .chat-empty :is(h1,h2,h3) { justify-content: center; }
+.scene-os .vault-module .vault-hub-tabs > button, .scene-os .vault-module .editor-tabs > button { font-size: 11px; letter-spacing: 0; min-height: 35px; }
+.scene-os .vault-module .vault-hub-heading > div > span, .scene-os .vault-module .vault-hub-status, .scene-os .vault-module .obsidian-app-link, .scene-os .vault-module .obsidian-app-link > button { font-size: 10px; letter-spacing: 0; }
+.scene-os .vault-module .note-list > button { font-size: 12px; height: 36px; border-radius: 6px; background: #142a3a80; }
+.scene-os .vault-module .note-list > button.active { background: #334e6270; color: #e4f2ff; }
+.scene-os .vault-module .note-search > input, .scene-os .vault-module .note-toolbar strong { font-size: 12px; }
+.scene-os .vault-module .note-content { font-size: 14px; line-height: 1.75; min-height: 280px; padding: 20px; }
+.scene-os .vault-module .note-toolbar, .scene-os .vault-module .note-footer { font-size: 11px; }
+.scene-os .vault-module .node-preview-tags > button, .scene-os .vault-module .vault-hub-footer { font-size: 10px; }
+.scene-os .vault-module .mc-button { font-size: 11px; min-height: 35px; box-shadow: none; }
+@media (min-width: 1800px) { .scene-os .observatory-header { padding-left: 2%; padding-right: 2%; gap: 45px; }.scene-os .intelligence-panel { right: 2%; }.scene-os .vault-status-panel { left: 2%; }.scene-os .living-prompt { font-size: 34px; padding-top: 25px; min-height: 88px; }.scene-os .composer-options { min-height: 65px; } }
+@media (max-width: 1150px) { .scene-os .observatory-header { gap: 22px; padding: 0 22px; }.scene-os .observatory-nav { gap: 18px; }.scene-os .aphelion-brand > span { font-size: 25px; }.scene-os .aphelion-brand > svg { width: 33px; height: 33px; }.scene-os .workspace-switchers { gap: 12px; }.scene-os .workspace-switchers > button { min-width: 135px; max-width: 165px; font-size: 14px; padding: 9px 11px; gap: 9px; }.scene-os .intelligence-panel { right: 22px; width: 225px; }.scene-os .vault-status-panel { left: 22px; width: 200px; bottom: 24vh; }.scene-os .command-composer { left: 15%; right: 15%; }.scene-os .composer-options > .composer-tools { gap: 16px; }.scene-os .living-prompt { font-size: 28px; }.scene-os .home-response { left: 15%; right: 26%; } }
+@media (max-width: 850px) { .scene-os .observatory-header { min-height: 113px; height: 113px; padding: 14px 20px 9px; gap: 0; flex-wrap: wrap; align-content: space-between; }.scene-os .aphelion-brand { order: 1; flex: 1; }.scene-os .aphelion-brand > span { font-size: 26px; }.scene-os .observatory-nav { order: 3; flex: 1 1 auto; width: auto; height: 31px; gap: 24px; }.scene-os .observatory-nav button { font-size: 15px; }.scene-os .observatory-nav button.active::after { bottom: 0; }.scene-os .observatory-nav button.active::before { bottom: -2px; }.scene-os .workspace-switchers { order: 2; width: auto; }.scene-os .workspace-switchers > button { min-width: 124px; min-height: 36px; max-width: 160px; font-size: 14px; }.scene-menu { order: 4; margin: 0; height: 31px; }.scene-os .intelligence-panel { top: 140px; width: 212px; }.intelligence-heading { padding: 13px 16px; }.scene-os .provider-list { padding: 5px 14px 10px; }.scene-os .provider-row { min-height: 46px; gap: 8px; }.scene-os .command-composer { left: 6%; right: 6%; bottom: 5vh; }.scene-os .vault-status-panel { bottom: 27vh; }.scene-os .home-response { left: 6%; right: 6%; top: 22vh; max-height: 45vh; }.scene-os .main-shell { height: calc(100dvh - 113px); }.scene-os .focus-screen, .scene-os .page-content { margin: 10px 18px; padding: 18px; }.scene-os .runtime-connection-error { left: 6%; right: 6%; top: 125px; } }
+@media (max-width: 600px) { .scene-os { min-height: 480px; }.scene-os .observatory-header { padding: 13px 16px 10px; height: 137px; min-height: 137px; gap: 9px 0; }.scene-os .aphelion-brand { flex: 0 0 auto; gap: 8px; }.scene-os .aphelion-brand > span { font-size: 25px; }.scene-os .aphelion-brand > svg { width: 32px; height: 32px; }.scene-os .workspace-switchers { order: 4; flex: 1 0 100%; width: 100%; gap: 10px; }.scene-os .workspace-switchers > button { flex: 1; width: 0; max-width: none; min-width: 0; min-height: 37px; font-size: 14px; border-radius: 10px; }.scene-os .observatory-nav { order: 2; margin-left: auto; flex: 0 0 auto; gap: 15px; height: 33px; }.scene-os .observatory-nav button { font-size: 14px; padding: 0; }.scene-menu { display: none; }.scene-os .intelligence-panel { top: 152px; right: 16px; width: 201px; border-radius: 12px; }.intelligence-heading { min-height: 45px; padding: 10px 13px; gap: 8px; }.intelligence-heading h2 { font-size: 20px; }.intelligence-heading > .intelligence-toggle { display: grid; place-items: center; min-width: 22px; }.intelligence-heading > button { min-height: 25px; min-width: 20px; }.scene-os .intelligence-panel.collapsed .provider-list { display: none; }.scene-os .intelligence-panel.collapsed .intelligence-heading { border-bottom: 0; }.scene-os .provider-row { min-height: 43px; padding: 7px 0; }.scene-os .provider-row > strong { font-size: 16px; }.scene-os .connection-label, .scene-os .external-label { font-size: 12px; }.scene-os .provider-symbol { width: 25px; flex-basis: 25px; }.scene-os .provider-symbol svg { width: 24px; height: 24px; }.scene-os .vault-status-panel { left: 16px; bottom: 26vh; width: 177px; padding: 11px 13px; border-radius: 12px; }.vault-identity { gap: 11px; }.vault-crystal { width: 23px; height: 36px; }.scene-os .vault-identity h1 { font-size: 13px; }.vault-identity strong { font-size: 20px; }.vault-live-state { font-size: 12px; }.scene-os .command-composer { left: 16px; right: 16px; bottom: 6vh; border-radius: 15px; }.scene-os .living-prompt { font-size: 25px; padding: 18px 20px 10px; min-height: 68px; resize: none; }.scene-os .composer-options { padding: 8px 12px 10px 16px; min-height: 56px; gap: 8px; }.scene-os .composer-options > .composer-tools { gap: 12px; }.composer-agent, .composer-mode { gap: 5px; }.scene-os .composer-options select { max-width: 78px; font-size: 13px; }.scene-os .composer-tools > button { font-size: 13px; gap: 6px; }.scene-os .composer-tools > button .select-chevron { display: none; }.scene-os .composer-mode > .pixel-icon { display: none; }.scene-os .composer-agent > .provider-symbol { width: 17px; flex-basis: 17px; }.scene-os .composer-agent > .provider-symbol svg { width: 17px; height: 17px; }.scene-os .composer-tools > button > span:not(.select-chevron) { max-width: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }.scene-os .composer-options > .composer-actions { gap: 5px; }.scene-os .preferences-trigger { min-width: 22px; }.scene-os .send-command { width: 34px; height: 34px; min-height: 34px; padding: 6px; }.scene-os .send-command > svg { width: 21px; height: 21px; }.scene-os .field-controls { left: 16px; bottom: 13px; }.scene-os .field-controls button { min-height: 28px; min-width: 28px; font-size: 10px; }.scene-os .field-controls button:last-child { padding: 6px 9px; }.scene-os .home-response { left: 16px; right: 16px; top: 24vh; max-height: 43vh; padding: 18px; }.scene-os .home-response .section-title > div { flex-wrap: wrap; }.scene-os .home-response button { font-size: 10px; }.scene-os .main-shell { height: calc(100dvh - 137px); }.scene-os .focus-screen, .scene-os .page-content { margin: 8px 12px; padding: 15px; }.scene-os .focus-heading h1 { font-size: 30px; }.scene-os .runtime-connection-error { left: 16px; right: 16px; top: 145px; font-size: 12px; }.scene-os .composer-context label { min-height: 35px; }.scene-os .composer-preferences .agent-preferences { grid-template-columns: 1fr; } }
+@media (max-width: 390px) { .scene-os .observatory-nav { gap: 12px; }.scene-os .observatory-nav button { font-size: 13px; }.scene-os .aphelion-brand > span { font-size: 23px; }.scene-os .aphelion-brand > svg { width: 28px; height: 28px; }.scene-os .composer-options > .composer-tools { gap: 8px; }.scene-os .composer-tools > button > span:not(.select-chevron) { max-width: 48px; }.scene-os .living-prompt { font-size: 23px; } }
+@media (max-height: 650px) and (min-width: 601px) { .scene-os .observatory-header { height: 70px; }.scene-os .intelligence-panel { top: 85px; }.scene-os .vault-status-panel { bottom: 29vh; }.scene-os .command-composer { bottom: 5vh; }.scene-os .living-prompt { min-height: 58px; font-size: 26px; padding-top: 15px; }.scene-os .composer-options { min-height: 50px; }.scene-os .home-response { top: 14vh; max-height: 51vh; } }
+.scene-os { min-height: 0; }
+@media (max-width: 600px) {
+  .scene-os { min-height: 0; }
+  .scene-os .observatory-nav button { min-height: 40px; }
+  .scene-os .workspace-switchers > button { min-height: 40px; }
+  .intelligence-heading > button, .intelligence-heading > .intelligence-toggle { min-width: 32px; min-height: 32px; }
+  .scene-os .composer-options select, .scene-os .composer-tools > button { min-height: 40px; }
+  .scene-os .preferences-trigger { min-width: 30px; min-height: 40px; }
+  .scene-os .send-command { min-width: 40px; min-height: 40px; }
+  .scene-os .field-controls button { min-width: 34px; min-height: 34px; }
+}
+@media (max-height: 500px) and (min-width: 601px) {
+  .scene-os .observatory-header { height: 64px; min-height: 64px; flex-wrap: nowrap; padding: 6px 18px; gap: 20px; }
+  .scene-os .observatory-nav { order: 2; margin: 0; flex: 1; gap: 15px; }
+  .scene-os .workspace-switchers { order: 3; }
+  .scene-os .workspace-switchers > button { min-width: 105px; max-width: 120px; }
+  .scene-os .scene-menu { display: none; }
+  .scene-os .intelligence-panel { top: 76px; right: 18px; width: 200px; }
+  .scene-os .intelligence-heading { min-height: 40px; padding: 9px 14px; }
+  .scene-os .provider-row { min-height: 35px; padding: 5px 0; }
+  .scene-os .vault-status-panel { left: 18px; bottom: 35vh; width: 175px; padding: 10px 12px; }
+  .scene-os .command-composer { left: 25%; right: 4%; bottom: 16px; }
+  .scene-os .living-prompt { min-height: 50px; font-size: 24px; padding: 10px 18px; }
+  .scene-os .composer-options { min-height: 45px; padding: 4px 14px; }
+  .scene-os .composer-options > .composer-tools { gap: 10px; }
+  .scene-os .main-shell { height: calc(100dvh - 64px); }
+}

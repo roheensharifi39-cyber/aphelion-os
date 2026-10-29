@@ -1,3 +1,4 @@
+import { Heading } from './Heading';
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { Agent, RuntimeEvent, RuntimeSnapshot, VaultGraph } from '../types';
 import { WorkerFigure, type WorkerKind } from './MinecraftWorker';
@@ -31,7 +32,7 @@ export function RuntimeCore({ runtime, events, connected, phase, graph, contexts
     </g>;
   };
   return <section className={`system-core living-core ${connected ? 'online' : 'offline'} ${busy ? 'processing' : ''} ${reduced ? 'reduced-motion' : ''}`} aria-label="Live system core" style={{ '--core-load': runtime?.cpu == null ? .35 : .25 + runtime.cpu / 140 } as CSSProperties}>
-    <div className="core-title"><span>LOCAL ORCHESTRATION</span><h1>APHELION</h1><p>YOUR AGENTS. YOUR WORLD. YOUR MEMORY.</p></div>
+    <div className="core-title"><span>LOCAL ORCHESTRATION</span><Heading as="h1">APHELION</Heading><p>YOUR AGENTS. YOUR WORLD. YOUR MEMORY.</p></div>
     <div className="core-world-meta"><span><i />{connected ? 'WORLD ONLINE' : 'CONNECTING'}</span><span>{graph ? `${graph.total} NOTES · ${graph.edges.length} LINKS` : 'READING VAULT'}</span></div>
     <svg className="core-scene living-world" viewBox="0 0 720 555" fill="none" role="group" aria-label="Living voxel orchestration and vault memory">
       <defs><radialGradient id="core-light"><stop stopColor="#19e6b1" stopOpacity=".3" /><stop offset="1" stopColor="#19e6b1" stopOpacity="0" /></radialGradient><linearGradient id="world-beam" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#44ffc8" stopOpacity="0" /><stop offset=".75" stopColor="#31ffd0" stopOpacity=".16" /><stop offset="1" stopColor="#44ffc8" stopOpacity="0" /></linearGradient><filter id="core-bloom"><feGaussianBlur stdDeviation="5" /></filter><pattern id="world-grid" width="48" height="24" patternUnits="userSpaceOnUse"><path d="M0 12 24 0 48 12 24 24Z" fill="none" stroke="#72d6dc" strokeOpacity=".1" /></pattern></defs>

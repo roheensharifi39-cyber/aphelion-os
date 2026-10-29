@@ -5,15 +5,23 @@ import { join, resolve, relative, isAbsolute } from 'node:path';
 import { homedir } from 'node:os';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { initializeVault, listNotes, readNote, saveNote } from './vault.mjs';
+import { initializeVault, listNotes, readNote, saveNote, ensureVaultDirectory } from './vault.mjs';
 import { buildVaultGraph } from './graph.mjs';
 import { runSubscriptionChat, subscriptionStatus, loginSubscription, validateReasoning } from './subscriptions.mjs';
 import { createModelCatalog } from './models.mjs';
+import { createOpenAIService, validateOpenAIMessages } from './openai.mjs';
+import { createChatGPTSubscriptionService } from './chatgpt-subscription.mjs';
+import { createCodexImageService } from './codex-images.mjs';
+import { buildVaultContext, formatVaultContext } from './vault-context.mjs';
 const execute = promisify(execFile);
 
 export function missionSteps(id) { return { planning: `${id}-claude`, building: `${id}-codex` }; }
 export function validRequestId(id) { return typeof id === 'string' && /^[\w-]{1,100}$/.test(id); }
 export function missionHasEvidence(changedFiles, successfulCommands) { return changedFiles.length > 0 || successfulCommands > 0; }
+export function conversationTitle(prompt) {
+  const title = String(prompt || '').normalize('NFKC').split('\n')[0].replace(/[<>:"/\\|?*\[\]#\x00-\x1f\x7f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 64).replace(/[. ]+$/, '');
+  return title || 'Conversation';
+}
 async function projectSnapshot(root) {
   const result = new Map();
   async function walk(folder, depth = 0) {
@@ -37,7 +45,7 @@ export async function chooseNativeFolder() {
   const result = await execute('powershell.exe', ['-NoProfile', '-STA', '-WindowStyle', 'Hidden', '-Command', script], { windowsHide: true, maxBuffer: 10000 });
   return result.stdout.trim() || null;
 }
-export async function createRuntime({ dataDirectory = defaultDataDirectory(), desktop = false, selectFolder = chooseNativeFolder, openExternal = async () => {}, getNetwork = () => ({ online: true, clients: 0, received: 0, sent: 0 }), agentRunner = runSubscriptionChat, authProvider = subscriptionStatus, obsidianFactory } = {}) {
+export async function createRuntime({ dataDirectory = defaultDataDirectory(), desktop = false, selectFolder = chooseNativeFolder, openExternal = async () => {}, getNetwork = () => ({ online: true, clients: 0, received: 0, sent: 0 }), agentRunner = runSubscriptionChat, authProvider = subscriptionStatus, obsidianFactory, openaiSecureStorage, openaiEnvironment = process.env, openaiFetch = globalThis.fetch, openaiRequestTimeoutMs, openaiImageTimeoutMs, chatGPTFactory = createChatGPTSubscriptionService, codexImageFactory = createCodexImageService } = {}) {
   const [{ createProjectManager }, { createTelemetry }, { createObsidianAdapter }] = await Promise.all([import('./projects.mjs'), import('./telemetry.mjs'), import('./obsidian.mjs')]);
   const root = resolve(dataDirectory); await mkdir(root, { recursive: true });
   const file = join(root, 'preferences.json');
@@ -55,6 +63,10 @@ export async function createRuntime({ dataDirectory = defaultDataDirectory(), de
     if (event.type !== 'telemetry') { history.push(event); if (history.length > 100) history.shift(); }
     events.emit('event', event);
   }
+  const openai = await createOpenAIService({ dataDirectory: root, env: openaiEnvironment, fetchImpl: openaiFetch, secureStorage: openaiSecureStorage, requestTimeoutMs: openaiRequestTimeoutMs, imageTimeoutMs: openaiImageTimeoutMs, onNotice: text => emit({ type: 'activity', source: 'system', text }) });
+  const chatGPT = await chatGPTFactory({ dataDirectory: root, secureStorage: openaiSecureStorage, fetchImpl: openaiFetch, requestTimeoutMs: openaiRequestTimeoutMs, onStatus: state => emit({ type: 'activity', source: 'system', text: state.connected ? 'ChatGPT subscription connected' : 'ChatGPT connection updated' }) });
+  const codexImages = await codexImageFactory({ dataDirectory: root, timeoutMs: openaiImageTimeoutMs });
+  async function openaiConnections() { return { ...openai.status(), subscription: chatGPT.status(), codex: await codexImages.status() }; }
   async function persist(next) {
     writing = writing.catch(() => {}).then(async () => { const temporary = `${file}.${randomUUID()}.tmp`; await writeFile(temporary, JSON.stringify(next, null, 2), { flag: 'wx' }); await rename(temporary, file); config = next; });
     await writing;
@@ -91,18 +103,83 @@ export async function createRuntime({ dataDirectory = defaultDataDirectory(), de
     finally { job.pid = null; }
   }
   function take(id, agent) { if (switching) throw new Error('Finish choosing your project or vault before starting an agent.'); if (!validRequestId(id) || jobs.has(id) || jobs.size >= 4) throw new Error('Start a valid request or wait for an active mission.'); const job = { id, agent, controller: new AbortController(), pid: null }; jobs.set(id, job); return job; }
-  async function quotedContext(paths, vaultPath, requestId) {
-    if (!paths) return '';
-    if (!Array.isArray(paths) || paths.length > 8) throw new Error('Attach up to eight notes.');
-    let context = '';
-    for (const path of [...new Set(paths)]) { const note = await readNote(vaultPath, path); context += `\n<note path=${JSON.stringify(path)}>\n${note.content.slice(0, 30000)}\n</note>\n`; }
-    if (paths.length) emit({ type: 'activity', source: 'vault', requestId, text: `Read ${paths.length} vault context note${paths.length === 1 ? '' : 's'}`, data: { paths } });
-    return context;
+  async function quotedContext(paths, vaultPath, requestId, messages, signal) {
+    const context = await buildVaultContext(vaultPath, messages, paths, signal);
+    const job = jobs.get(requestId);
+    if (job) job.contextPaths = context.notes.map(note => note.path);
+    for (const warning of context.warnings) emit({ type: 'activity', source: 'vault', requestId, text: warning });
+    if (context.notes.length) emit({ type: 'activity', source: 'vault', requestId, text: 'Read ' + context.automaticPaths.length + ' automatic and ' + (context.notes.length - context.automaticPaths.length) + ' pinned vault notes', data: { paths: context.notes.map(note => note.path), automaticPaths: context.automaticPaths } });
+    return formatVaultContext(context);
+  }
+  async function rememberConversation(request, result, job, vaultPath, agent) {
+    if (job.controller.signal.aborted || !result.text?.trim()) return {};
+    try {
+      await ensureVaultDirectory(vaultPath, 'Aphelion/Conversations');
+      const links = [...new Set(job.contextPaths || request.contextPaths || [])];
+      if (request.previousMemoryPath) {
+        try { await readNote(vaultPath, request.previousMemoryPath); links.push(request.previousMemoryPath); } catch { /* Missing previous notes never block a reply. */ }
+      }
+      const prompt = request.messages.findLast(message => message.role === 'user')?.content || '';
+      const title = conversationTitle(prompt), memoryPath = `Aphelion/Conversations/${title} - ${randomUUID()}.md`;
+      const label = { claude: 'Claude', codex: 'Codex', openai: 'ChatGPT' }[agent];
+      const transcript = agent === 'openai' ? request.messages.map(message => `## ${message.role === 'user' ? 'You' : label}\n\n${message.content}`).join('\n\n') : `## You\n\n${prompt}`;
+      if (job.controller.signal.aborted) throw new DOMException('Stopped', 'AbortError');
+      await saveNote(vaultPath, { path: memoryPath, create: true, content: `---\ntags: [aphelion, conversation, ${agent}]\ncreated: ${new Date().toISOString()}\n---\n# ${title}\n\n${transcript}\n\n## ${label}\n\n${result.text}\n\n${links.length ? '## Related memory\n\n' + [...new Set(links)].map(path => '- [[' + path.replace(/\.md$/, '') + ']]').join('\n') : ''}\n` });
+      emit({ type: 'vault', source: 'vault', requestId: job.id, text: 'Conversation remembered in the active vault', data: { path: memoryPath } });
+      return { memoryPath };
+    } catch (error) {
+      if (job.controller.signal.aborted) throw new DOMException('Stopped', 'AbortError');
+      const memoryWarning = `Reply received, but vault memory could not be saved: ${error.message}`;
+      emit({ type: 'activity', source: 'vault', requestId: job.id, text: memoryWarning });
+      return { memoryWarning };
+    }
   }
   async function sample() { snapshotPending ||= telemetry.sample().finally(() => { snapshotPending = null; }); return snapshotPending; }
   const pulse = setInterval(() => { void sample().then(data => emit({ type: 'telemetry', data })).catch(error => emit({ type: 'activity', text: `Telemetry unavailable: ${error.message}` })); }, 1000); pulse.unref?.();
   const methods = {
     status: () => status(true),
+    openaiStatus: openaiConnections,
+    startChatGPTLogin: async () => { idle(); const login = await chatGPT.startLogin(); if (desktop) { try { await openExternal(login.authorizationUrl); } catch { chatGPT.cancelLogin(); throw new Error('The sign-in browser could not open. Try again.'); } return { authorizationUrl: '', expiresAt: login.expiresAt }; } return login; },
+    cancelChatGPTLogin: () => chatGPT.cancelLogin(),
+    disconnectChatGPT: async () => { idle(); return chatGPT.disconnect(); },
+    chatGPTModels: () => chatGPT.models(),
+    configureOpenAI: async input => { await openai.configure(input); emit({ type: 'activity', text: 'Updated the optional OpenAI API connection' }); return openaiConnections(); },
+    openaiChat: async request => {
+      const messages = validateOpenAIMessages(request?.messages);
+      const source = request.source || 'subscription'; if (!['subscription','api'].includes(source)) throw new Error('Choose ChatGPT subscription or API key for this conversation.');
+      const job = take(request.requestId, 'openai'), vaultPath = config.vaultPath;
+      emit({ type: 'mission', source: 'system', requestId: job.id, phase: 'chat', text: 'ChatGPT request started' });
+      try {
+        const context = await quotedContext(request.contextPaths, vaultPath, job.id, messages, job.controller.signal);
+        if (context) messages.at(-1).content += `\n\nSelected vault context (quoted reference):\n${context}`;
+        const result = source === 'api' ? await openai.chat(messages, { signal: job.controller.signal }) : await chatGPT.chat(messages, { signal: job.controller.signal, model: request.model, onDelta: delta => events.emit('delta', { requestId: job.id, delta }) });
+        const memory = await rememberConversation(request, result, job, vaultPath, 'openai');
+        if (job.controller.signal.aborted) throw new DOMException('Stopped', 'AbortError');
+        emit({ type: 'mission', source: 'system', requestId: job.id, phase: 'completed', text: 'ChatGPT response completed' });
+        return { ...result, ...memory };
+      } catch (error) { emit({ type: 'mission', source: 'system', requestId: job.id, phase: job.controller.signal.aborted ? 'stopped' : 'failed', text: error.message }); throw error; }
+      finally { jobs.delete(job.id); }
+    },
+    generateImage: async request => {
+      if (!request || typeof request.prompt !== 'string' || !request.prompt.trim() || request.prompt.length > 32000) throw new Error('Describe an image below 32,000 characters.');
+      const source = request.source || 'codex'; if (!['codex','api'].includes(source)) throw new Error('Choose Codex subscription or API key for image generation.');
+      const job = take(request.requestId, source === 'codex' ? 'codex' : 'openai'), vaultPath = config.vaultPath;
+      emit({ type: 'mission', source: 'system', requestId: job.id, phase: 'image', text: source === 'codex' ? 'Generating an image with your Codex subscription' : 'Generating an image with the optional API connection' });
+      try {
+        const image = source === 'api' ? await openai.image(request.prompt, { signal: job.controller.signal }) : await codexImages.image(request.prompt, { signal: job.controller.signal, onProcess: pid => { job.pid = pid; } });
+        if (job.controller.signal.aborted) throw new DOMException('Stopped', 'AbortError');
+        try {
+          await ensureVaultDirectory(vaultPath, 'Aphelion/Images');
+          const filename = `${conversationTitle(image.prompt)} - ${image.id}.png`;
+          await writeFile(join(vaultPath, 'Aphelion', 'Images', filename), Buffer.from(image.src.split(',')[1], 'base64'), { flag: 'wx' });
+          emit({ type: 'vault', source: 'vault', requestId: job.id, text: 'Generated image saved in the active vault', data: { path: `Aphelion/Images/${filename}` } });
+        } catch { emit({ type: 'activity', source: 'vault', requestId: job.id, text: 'Image received, but it could not be saved in the vault. Use Download to keep a copy.' }); }
+        if (job.controller.signal.aborted) throw new DOMException('Stopped', 'AbortError');
+        emit({ type: 'mission', source: 'system', requestId: job.id, phase: 'completed', text: 'Image generation completed' });
+        return image;
+      } catch (error) { emit({ type: 'mission', source: 'system', requestId: job.id, phase: job.controller.signal.aborted ? 'stopped' : 'failed', text: error.message }); throw error; }
+      finally { jobs.delete(job.id); }
+    },
     modelCatalog,
     configure: async input => {
       if (!input || typeof input !== 'object' || Object.keys(input).some(key => !['models', 'reasoning', 'repo'].includes(key))) throw new Error('Only model, reasoning and repository preferences are supported. API keys are not accepted.');
@@ -120,10 +197,14 @@ export async function createRuntime({ dataDirectory = defaultDataDirectory(), de
       const job = take(request.requestId, request.agent), snapshot = { ...config, models: { ...config.models }, reasoning: { ...config.reasoning } };
       emit({ type: 'mission', source: request.agent, requestId: job.id, phase: mode, text: `${mode} request started` });
       try {
-        const context = await quotedContext(request.contextPaths, snapshot.vaultPath, job.id);
+        const context = await quotedContext(request.contextPaths, snapshot.vaultPath, job.id, request.messages, job.controller.signal);
         const messages = request.messages.map(message => ({ ...message }));
         if (context) { const lastUser = messages.findLast(message => message.role === 'user'); if (!lastUser) throw new Error('Provide a user prompt.'); lastUser.content += `\n\nSelected vault context (quoted reference):\n${context}`; }
-        const result = await run({ ...request, messages }, job, project?.path || workbench, snapshot); emit({ type: 'mission', source: request.agent, requestId: job.id, phase: 'completed', text: 'Agent response completed' }); return result;
+        const result = await run({ ...request, messages }, job, project?.path || workbench, snapshot);
+        const memory = await rememberConversation(request, result, job, snapshot.vaultPath, request.agent);
+        if (job.controller.signal.aborted) throw new DOMException('Stopped', 'AbortError');
+        emit({ type: 'mission', source: request.agent, requestId: job.id, phase: 'completed', text: 'Agent response completed' });
+        return { ...result, ...memory };
       }
       catch (error) { emit({ type: 'mission', source: request.agent, requestId: job.id, phase: job.controller.signal.aborted ? 'stopped' : 'failed', text: error.message }); throw error; }
       finally { jobs.delete(job.id); }
@@ -134,7 +215,7 @@ export async function createRuntime({ dataDirectory = defaultDataDirectory(), de
       const job = take(request.requestId, 'claude'), steps = missionSteps(job.id), snapshot = { ...config, models: { ...config.models }, reasoning: { ...config.reasoning } };
       try {
         const before = await projectSnapshot(project.path);
-        const context = await quotedContext(request.contextPaths, snapshot.vaultPath, job.id);
+        const context = await quotedContext(request.contextPaths, snapshot.vaultPath, job.id, [{ role: 'user', content: request.task }], job.controller.signal);
         emit({ type: 'mission', source: 'claude', requestId: job.id, phase: 'planning', text: `Planning in ${project.name}` });
         const plan = await run({ agent: 'claude', mode: 'plan', requestId: steps.planning, messages: [{ role: 'user', content: `Plan this mission for the current project. Inspect source files as needed. Give a concrete implementation and verification plan.\n\nMission: ${request.task}\n\nSelected vault context (quoted):\n${context}` }] }, job, project.path, snapshot);
         if (job.controller.signal.aborted) throw new DOMException('Stopped', 'AbortError');
@@ -169,5 +250,5 @@ export async function createRuntime({ dataDirectory = defaultDataDirectory(), de
     obsidian: () => obsidian.status(), openObsidian: path => obsidian.open(path),
     openExternal: async raw => { const url = new URL(raw); if (url.protocol !== 'https:' || !['github.com','chatgpt.com','claude.ai','code.claude.com','learn.chatgpt.com','developers.openai.com','elevenlabs.io','obsidian.md'].includes(url.hostname)) throw new Error('Unsupported external link.'); await openExternal(url.href); },
   };
-  return { methods, invoke: async (name, args = []) => { if (disposed || !Object.hasOwn(methods, name)) throw new Error('This local engine action is unavailable.'); return methods[name](...args); }, onEvent: callback => { events.on('event', callback); return () => events.off('event', callback); }, onDelta: callback => { events.on('delta', callback); return () => events.off('delta', callback); }, history: () => [...history], dispose: () => { disposed = true; clearInterval(pulse); for (const job of jobs.values()) job.controller.abort(); projects.dispose(); obsidian.dispose(); telemetry.dispose(); events.removeAllListeners(); } };
+  return { methods, invoke: async (name, args = []) => { if (disposed || !Object.hasOwn(methods, name)) throw new Error('This local engine action is unavailable.'); return methods[name](...args); }, onEvent: callback => { events.on('event', callback); return () => events.off('event', callback); }, onDelta: callback => { events.on('delta', callback); return () => events.off('delta', callback); }, history: () => [...history], dispose: () => { disposed = true; clearInterval(pulse); for (const job of jobs.values()) job.controller.abort(); openai.dispose(); chatGPT.dispose(); codexImages.dispose(); projects.dispose(); obsidian.dispose(); telemetry.dispose(); events.removeAllListeners(); } };
 }

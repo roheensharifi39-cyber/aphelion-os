@@ -81,6 +81,53 @@ function waitForEvent(predicate) {
 }
 
 describe('shared mission engine integration', () => {
+  it('sends selected-vault identity to Codex without manual attachments', async () => {
+    const calls = [];
+    await start(async request => { calls.push(request); return response('Read the academic profile.'); });
+    await engine.invoke('saveNote', [{ path: 'Home.md', create: true, content: 'Alex is studying engineering at Example University.' }]);
+    const messages = [{ role: 'user', content: 'What do you know about me?' }];
+    const result = await engine.invoke('chat', [{ agent: 'codex', mode: 'chat', requestId: 'automatic-codex-memory', messages }]);
+    expect(calls[0].messages[0].content).toContain('Alex');
+    expect(calls[0].messages[0].content).toContain('Active vault memory');
+    expect(messages[0].content).toBe('What do you know about me?');
+    const saved = await engine.invoke('readNote', [result.memoryPath]);
+    expect(saved.content).toContain('[[Home]]');
+    expect(saved.content).not.toContain('Active vault memory');
+  });
+  it('automatically archives replies in one active vault folder and links related turns', async () => {
+    await start(async () => response('A remembered decision.'));
+    const input = { agent:'claude', requestId:'memory-first', sessionId:'session-one', messages:[{role:'user',content:'Remember the plan'}], contextPaths:['Project Memory.md'] };
+    const first = await engine.invoke('chat',[input]);
+    expect(first.memoryPath).toMatch(/^Aphelion\/Conversations\/Remember the plan - [\w-]+\.md$/);
+    const note = await engine.invoke('readNote',[first.memoryPath]);
+    expect(note.content).toContain('A remembered decision.');
+    expect(note.content).toContain('[[Project Memory]]');
+    const second = await engine.invoke('chat',[{...input,requestId:'memory-second',previousMemoryPath:first.memoryPath}]);
+    const next = await engine.invoke('readNote',[second.memoryPath]);
+    expect(next.content).toContain(`[[${first.memoryPath.replace(/\.md$/, '')}]]`);
+    const graph = await engine.invoke('vaultGraph');
+    expect(graph.nodes.some(node=>node.path===first.memoryPath)).toBe(true);
+    expect(graph.edges.some(edge=>edge.from===second.memoryPath&&edge.to===first.memoryPath)).toBe(true);
+  });
+  it('keeps new conversation memory inside the newly selected vault', async () => {
+    let picks=0;
+    await start(async()=>response('Memory for this vault.'),{selectFolder:async()=>++picks===1?project:join(root,'other-vault')});
+    const before=await engine.invoke('chat',[{agent:'codex',requestId:'old-vault',messages:[{role:'user',content:'First vault'}]}]);
+    await mkdir(join(root,'other-vault'));
+    await engine.invoke('selectVault');
+    const after=await engine.invoke('chat',[{agent:'codex',requestId:'new-vault',messages:[{role:'user',content:'Second vault'}]}]);
+    const notes=await engine.invoke('listNotes');
+    expect(notes.some(note=>note.path===after.memoryPath)).toBe(true);
+    expect(notes.some(note=>note.path===before.memoryPath)).toBe(false);
+    expect(await readFile(join(dataDirectory,'vault',before.memoryPath),'utf8')).toContain('First vault');
+  });
+  it('retains a successful reply when vault memory cannot be written', async () => {
+    await start(async()=>response('Keep this reply.'));
+    await writeFile(join(dataDirectory,'vault','Aphelion'),'A file blocks the memory folder');
+    const result=await engine.invoke('chat',[{agent:'codex',requestId:'memory-blocked',messages:[{role:'user',content:'Hello'}]}]);
+    expect(result.text).toBe('Keep this reply.'); expect(result.memoryPath).toBeUndefined();
+    expect(result.memoryWarning).toContain('could not be saved');
+  });
   it('blocks agent starts while a workspace folder picker is pending', async () => {
     let picks = 0, finishPicker, runs = 0;
     await start(async () => { runs++; return response('Should not run during switching.'); }, { selectFolder: async () => ++picks === 1 ? project : new Promise(resolve => { finishPicker = resolve; }) });

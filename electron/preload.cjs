@@ -2,6 +2,9 @@ const { contextBridge, ipcRenderer } = require('electron');
 const invoke = (name, ...args) => ipcRenderer.invoke('aphelion:' + name, ...args);
 contextBridge.exposeInMainWorld('aphelion', {
   status: () => invoke('status'), configure: input => invoke('configure', input),
+  openaiStatus: () => invoke('openaiStatus'), configureOpenAI: input => invoke('configureOpenAI', input),
+  startChatGPTLogin: () => invoke('startChatGPTLogin'), cancelChatGPTLogin: () => invoke('cancelChatGPTLogin'), disconnectChatGPT: () => invoke('disconnectChatGPT'), chatGPTModels: () => invoke('chatGPTModels'),
+  openaiChat: input => invoke('openaiChat', input), generateImage: input => invoke('generateImage', input),
   modelCatalog: () => invoke('modelCatalog'),
   login: agent => invoke('login', agent),
   runtime: () => invoke('runtime'), mission: request => invoke('mission', request),

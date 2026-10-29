@@ -1,0 +1,1 @@
+export type ParticleFieldSettings = { count: number; size: number; speed: number; opacity: number; bloomStrength: number; bloomRadius: number; bloomThreshold: number; colorA: string; colorB: string; autorotate: boolean };
