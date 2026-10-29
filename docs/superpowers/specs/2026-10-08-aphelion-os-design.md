@@ -4,7 +4,7 @@ The direct user request and later corrections are authoritative. Attached report
 
 ## Accepted product
 
-A three-column cockpit: stacked amber Claude and cyan Codex panels, a mint animated voxel orchestration core and project modules in the center, and a purple Obsidian graph/editor plus live activity on the right. A measured system strip sits above; the prompt and Minecraft-style launch button sit below. Monocraft body text and Pixelify Sans headings are local font assets. SVG lights, orbiting blocks and network packets react to engine heartbeat and actual mission events. Reduced motion is respected.
+A three-column cockpit: stacked amber Claude and cyan Codex panels, a mint animated voxel orchestration core and project modules in the center, and a purple Obsidian graph/editor plus live activity on the right. A measured system strip sits above; the prompt and custom launch button sit below. Monocraft body text and Pixelify Sans headings are local font assets. SVG lights, orbiting blocks and network packets react to engine heartbeat and actual mission events. Reduced motion is respected.
 
 Every control has a concrete action. Projects selects/creates a local folder. Files reads source. Terminal runs curated commands. Automations invokes explicit package recipes. Vault views index actual Markdown, resolve wiki links, select context, safely edit notes and open the installed Obsidian app. Workbench, workflows, settings and voice use top controls and a bottom hotbar.
 

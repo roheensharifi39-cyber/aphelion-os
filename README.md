@@ -1,6 +1,6 @@
 # Aphelion OS
 
-A live, local AI command center with Minecraft-style buttons, pixel typography, an animated voxel core, and your real Obsidian vault on the front screen. Claude plans, Codex builds, and the local engine verifies the result. No sidebar or API-key fields.
+A local AI desktop workspace that brings Claude, Codex, ChatGPT, and Obsidian together. A monochrome particle membrane displays connected notes and agent activity, while movable conversations and shared vault memory keep your work in one place.
 
 ![Aphelion living command center](docs/screenshots/aphelion-living-home.png)
 
@@ -37,7 +37,7 @@ Each Claude and Codex panel has its own prompt, **Model** dropdown, **Reasoning*
 
 Model and reasoning choices come from the installed official clients. Switching to a model that does not support the current effort resets effort to Auto. Choices persist on this device and are captured for each run. The catalog describes client-supported choices; the provider checks your subscription's model access when you run a prompt.
 
-The voxel workers walk and work while their real agent runs. Real vault note links appear as floating memory blocks in the center; click a block to attach its note to the next prompt or mission. Only attached notes are sent. Saving a response creates an actual Markdown file, which the watcher indexes into both graph views. The lights, data packets, and phase rail follow runtime events, with reduced-motion support.
+Claude and Codex appear as active agents on the monochrome membrane network. Memory nodes open real vault notes, and agent status follows runtime activity. Background and relevant vault notes are included automatically; you can also pin specific notes. Successful responses are saved as Markdown in the connected vault. Animations respect reduced motion.
 
 See [Codex model discovery](https://learn.chatgpt.com/docs/app-server#list-models-modellist) and [Claude model and effort configuration](https://code.claude.com/docs/en/model-config).
 
@@ -61,7 +61,7 @@ The launcher also offers **Chat**, **Plan**, and **Build** separately. Chat disa
 - **System:** measured CPU/memory, actual engine traffic, current process IDs and jobs, live activity, and heartbeat-driven core lights and packets.
 - **Voice:** system speech, available browser speech recognition, and an ElevenLabs website launcher for your existing account.
 
-Animations respect reduced motion. Pixel button sounds are optional. The voxel scene and graph are interactive code, not a static reference image.
+Animations respect reduced motion. The particle membrane and note graph are interactive code, not a static reference image.
 
 ## Obsidian and local memory
 
@@ -106,4 +106,4 @@ GitHub Actions run tests/builds and produce a Windows portable artifact. The Win
 
 ## Credits
 
-[Monocraft](https://github.com/IdreesInc/Monocraft), by Idrees Hassan, and Pixelify Sans are included under their SIL Open Font Licenses. Icons, voxel scenes and button sounds are original. Aphelion OS is not affiliated with Minecraft or its creators.
+[Monocraft](https://github.com/IdreesInc/Monocraft), by Idrees Hassan, and Pixelify Sans are included under their SIL Open Font Licenses. Icons, scenes and button sounds are original.

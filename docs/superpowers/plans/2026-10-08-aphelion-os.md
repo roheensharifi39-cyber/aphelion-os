@@ -3,7 +3,7 @@
 The final user reference and working V1 request govern this implementation.
 
 - [x] Create the user's private GitHub repository and local project.
-- [x] Implement final cockpit, Minecraft-style controls/fonts, reactive voxel core, transitions and reduced motion.
+- [x] Implement final cockpit, custom controls/fonts, reactive voxel core, transitions and reduced motion.
 - [x] Replace the browser preview with the shared real local engine.
 - [x] Connect official subscription-authenticated Claude Code and Codex clients without API-key fallback.
 - [x] Connect the installed Obsidian app, registered vault, Markdown graph/editor and disk watcher.
