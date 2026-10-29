@@ -2,7 +2,7 @@
 
 A local AI desktop workspace that brings Claude, Codex, ChatGPT, and Obsidian together. A monochrome particle membrane displays connected notes and agent activity, while movable conversations and shared vault memory keep your work in one place.
 
-![Aphelion OS monochrome workspace with the particle membrane, agent nodes, and shared vault memory](docs/screenshots/aphelion-monochrome-home.png)
+![Aphelion OS monochrome workspace with the particle membrane, agent nodes, and shared vault memory](docs/screenshots/aphelion-monochrome-home.jpg)
 
 ## Open it
 
